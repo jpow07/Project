@@ -116,7 +116,7 @@ def add_nop(i, sblock):
     nop_num = 0
     output = [nop_exist, sblock, nop_num]
     if i == 1:
-        if sblock[i][0] != "nop\t" and sblock[i - 1][0] != "nop\t":
+        if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop":
             l1 = sblock[i][0].split(' ')[1].split(',')
             l2 = sblock[i - 1][0].split(' ')[1].split(',')
             for elements in range(1, len(l1)):
@@ -125,7 +125,7 @@ def add_nop(i, sblock):
                         output[0] = True
                         output[2] = output[2] + 2
                         sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop\t"
+                        sline[0] = "nop"
                         sline[i + 1] = "IF"
                         sline[i + 2] = "ID"
                         sline[i + 3] = "*"
@@ -133,7 +133,7 @@ def add_nop(i, sblock):
                         sblock.insert(i, sline)
                         output[1] = sblock
     elif i > 1:
-        if sblock[i][0] != "nop\t" and sblock[i - 1][0] != "nop\t" and sblock[i - 2][0] != "nop\t":
+        if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop" and sblock[i - 2][0] != "nop":
             l1 = sblock[i][0].split(' ')[1].split(',')
             l2 = sblock[i - 1][0].split(' ')[1].split(',')
             l3 = sblock[i - 2][0].split(' ')[1].split(',')
@@ -143,7 +143,7 @@ def add_nop(i, sblock):
                         output[0] = True
                         output[2] = output[2] + 2
                         sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop\t"
+                        sline[0] = "nop"
                         sline[i + 1] = "IF"
                         sline[i + 2] = "ID"
                         sline[i + 3] = "*"
@@ -155,7 +155,7 @@ def add_nop(i, sblock):
                         output[0] = True
                         output[2] = output[2] + 1
                         sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop\t"
+                        sline[0] = "nop"
                         sline[i + 1] = "IF"
                         sline[i + 2] = "ID"
                         sline[i + 3] = "*"
@@ -200,7 +200,7 @@ def main():
                             sblock[lines][elements] = "ID"
 
             elif nopexist is False:
-                if sblock[lines][0] != "nop\t":
+                if sblock[lines][0] != "nop":
                     if nopfinish is True:
                         for elements in range(1, i + 2):
                             if sblock[lines][elements] == ".":
@@ -243,6 +243,7 @@ def main():
                 else:
                     print("{:4s}".format(l[j]), end='')
             print()
+        print()
         #Print the registers
         for l in range(0, len(register)):
             print(register[l][0], '=', end=' ')
@@ -275,7 +276,7 @@ def main():
                             sblock[lines][elements] = "ID"
 
             elif nopexist is False or nopfinish is True:
-                if sblock[lines][0] != "nop\t":
+                if sblock[lines][0] != "nop":
                     for elements in range(1, counter1 + 2):
                         if sblock[lines][elements] == ".":
                             if elements == lines + 1:
@@ -327,6 +328,7 @@ def main():
                 else:
                     print("{:4s}".format(l[j]), end='')
             print()
+        print()
         #Print the registers
         for l in range(0, len(register)):
             print(register[l][0], '=', end=' ')
