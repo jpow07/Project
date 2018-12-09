@@ -6,11 +6,16 @@ The purpose of this code is to read in a mips file and to output up to the first
 """
 import sys
 
+#This is a function to take in the operation, the unseperated registers and the array to registers
+#and then return the desired calculation
 def calculation(opp, order, reg):
+    #Seperate the input based on comma's
     c = order.split(",")
+    #Check if the 'add' operation
     if opp == "add":
         s1 = 0
         s2 = 0
+        #Find the correct registers and add the values
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
@@ -18,16 +23,20 @@ def calculation(opp, order, reg):
                 s2 = reg[i][1]
         answer = s1 + s2
         return answer
+    #Check if the 'addi' operation
     elif opp == "addi":
         s1 = 0
+        #Find the one register and add the constant
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
         answer = s1 + int(c[2])
         return answer
+    #Check if the 'and' operation
     elif opp == "and":
         s1 = 0
         s2 = 0
+        #Find the two registers and logical 'and' them
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
@@ -35,16 +44,20 @@ def calculation(opp, order, reg):
                 s2 = reg[i][1]
         answer = s1 & s2
         return answer
+    #Check if the 'andi' operation
     elif opp == "andi":
         s1 = 0
+        #Find the one register and then logical 'and' with constant
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
         answer = s1 & int(c[2])
         return answer
+    #Check if the 'or' operation
     elif opp == "or":
         s1 = 0
         s2 = 0
+        #Find the two registers and logical 'or' them
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
@@ -52,73 +65,92 @@ def calculation(opp, order, reg):
                 s2 = reg[i][1]
         answer = s1 | s2
         return answer
+    #Check if the 'ori' function
     elif opp == "ori":
         s1 = 0
+        #Find the one register and logical 'or' with the constant
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
         answer = s1 | int(c[2])
         return answer
+    #Check if 'slt' operation
     elif opp == "slt":
         s1 = 0
         s2 = 0
+        #Find the two registers and then check if s1 is less than s2
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
             elif reg[i][0] == c[2]:
                 s2 = reg[i][1]
+        #Return either 0 or 1 based on result
         if s1 < s2:
             answer = 0
         else:
             answer = 1
         return answer
+    #Check if 'slti' operation
     elif opp == "slti":
         s1 = 0
+        #Find the one register and then check if less than constant
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
+        #Return either 0 or 1 based on result
         if s1 < int(c[2]):
             answer = 0
         else:
             answer = 1
         return answer
+    #Check if operation is 'beq'
     elif opp == "beq":
         s1 = 0
         s2 = 0
+        #Find the two registers
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
             elif reg[i][0] == c[2]:
                 s2 = reg[i][1]
+        #Return either Yj, yes jump, or Nj, no jump, based on equaltiy
         if s1 == s2:
             answer = "Yj"
         else:
             answer = "Nj"
         return answer
+    #Check if operation is 'bne'
     elif opp == "bne":
         s1 = 0
         s2 = 0
+        #Find the two registers
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
             elif reg[i][0] == c[2]:
                 s2 = reg[i][1]
+        #Check if they are not equal and return Yj, yes jump, or Nj, no jump
         if s1 != s2:
             answer = "Yj"
         else:
             answer = "Nj"
         return answer
+    #Else the operation is not found
     return "opp not found"
 
-
+#A function to determine if a nop is needed at any given line, i
+#It takes in: i, as well as the array of lines
 def add_nop(i, sblock):
     nop_exist = False
     nop_num = 0
     output = [nop_exist, sblock, nop_num]
+    #Check if the first line
     if i == 1:
+        #Check if the previous values of nops
         if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop":
             l1 = sblock[i][0].split(' ')[1].split(',')
             l2 = sblock[i - 1][0].split(' ')[1].split(',')
+            #Run through all the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
                     if "MEM" in sblock[i - 1]:
@@ -132,11 +164,14 @@ def add_nop(i, sblock):
                         sblock.insert(i, sline)
                         sblock.insert(i, sline)
                         output[1] = sblock
+    #Else if any other line
     elif i > 1:
+        #Check if previous are nops
         if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop" and sblock[i - 2][0] != "nop":
             l1 = sblock[i][0].split(' ')[1].split(',')
             l2 = sblock[i - 1][0].split(' ')[1].split(',')
             l3 = sblock[i - 2][0].split(' ')[1].split(',')
+            #RUn through the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
                     if "MEM" in sblock[i - 1]:
@@ -164,6 +199,7 @@ def add_nop(i, sblock):
     return output
 
 
+#A main function to be the driver for our code
 def main():
     # Check Arg[1] for forwarding option
     if sys.argv[1].upper() == 'N':
