@@ -234,15 +234,16 @@ def main():
                         if star_num < 3:
                             if sblock[lines][elements - 1] == "ID" or sblock[lines][elements - 1] == "*":
                                 sblock[lines][elements] = "*"
-
+        #Print the header and command
         print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
         for l in sblock:
             for j in range(0, len(l)):
                 if j == 0:
-                    print("{:18}".format(l[j]), end='')
+                    print("{:20}".format(l[j]), end='')
                 else:
-                    print("{:5s}".format(l[j]), end='')
+                    print("{:4s}".format(l[j]), end='')
             print()
+        #Print the registers
         for l in range(0, len(register)):
             print(register[l][0], '=', end=' ')
             print("{:14s}".format(str(register[l][1])), end='')
@@ -315,17 +316,18 @@ def main():
                         elif sblock[lines][elements - 1] == "MEM":
                             sblock[lines][elements] = "MEM"
             lines = lines + 1
-        print("{:18}".format("CPU Cycles ===>"), end='')
-        for n in range(1, 17):
-            print("{:5}".format(n), end='')
+        #Print the header and the command
+        print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
         print()
+        #Print the commands
         for l in sblock:
             for j in range(0, len(l)):
                 if j == 0:
-                    print("{:18}".format(l[j]), end='')
+                    print("{:20}".format(l[j]), end='')
                 else:
-                    print("{:5s}".format(l[j]), end='')
+                    print("{:4s}".format(l[j]), end='')
             print()
+        #Print the registers
         for l in range(0, len(register)):
             print(register[l][0], '=', end=' ')
             print("{:14s}".format(str(register[l][1])), end='')
