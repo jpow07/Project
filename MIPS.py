@@ -295,7 +295,7 @@ def main():
                                 if type(answer) == int:
                                     for r in range(0, len(register)):
                                         if register[r][0] == order.split(',')[0]:
-                                            register[r][1] = 1
+                                            register[r][1] = int(answer)
                 else:
                     for elements in range(1, counter1 + 2):
                         star_num = 0
@@ -319,7 +319,6 @@ def main():
             lines = lines + 1
         #Print the header and the command
         print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
-        print()
         #Print the commands
         for l in sblock:
             for j in range(0, len(l)):
