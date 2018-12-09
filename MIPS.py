@@ -1,10 +1,10 @@
 """
-This code is written by Isaac Sibley, _______, and ______ for the Comp Org group project.
+This code is written by Isaac Sibley, Jordan Powell, and ______ for the Comp Org group project.
 
 The purpose of this code is to read in a mips file and to output up to the first 16 clock cycles.
 
 """
-
+import sys
 
 def calculation(opp, order, reg):
     c = order.split(",")
@@ -165,6 +165,13 @@ def add_nop(i, sblock):
 
 
 def main():
+    # Check Arg[1] for forwarding option
+    if sys.argv[1].upper() == 'N':
+        optionForwarding = " (no forwarding)"
+    else:
+        optionForwarding = " (forwarding)"
+
+
     register = [['$s0', 0], ['$s1', 0], ['$s2', 0], ['$s3', 0], ['$s4', 0], ['$s5', 0], ['$s6', 0], ['$s7', 0],
                 ['$t0', 0], ['$t1', 0], ['$t2', 0], ['$t3', 0], ['$t4', 0], ['$t5', 0], ['$t6', 0], ['$t7', 0],
                 ['$t8', 0], ['$t9', 0]]
@@ -172,7 +179,7 @@ def main():
     with open('ex03.s', 'r') as f1:
         list1 = f1.readlines()
     sblock = []
-    print('START OF SIMULATION')
+    print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
 
     n = 0
@@ -239,7 +246,7 @@ def main():
         for l in sblock:
             for j in range(0, len(l)):
                 if j == 0:
-                    print("{:20}".format(l[j]), end='')
+                    print("{:20}".format(l[j]), end = '')
                 else:
                     print("{:4s}".format(l[j]), end='')
             print()
