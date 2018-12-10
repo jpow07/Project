@@ -14,7 +14,11 @@ class Expression:
         self.statement = statement
         temp = statement.split(' ')
         self.operand = temp[0]
-        self.registers = temp[1].split(',')
+        self.register = temp[1].split(',')
+        if len(self.register) == 2:
+            self.format = 'R'
+        else:
+            self.format = 'L'
         self.currentCycle = 1
         self.isWaiting = 0
         self.offset = offset
@@ -55,11 +59,37 @@ class Expression:
         # Return the string with proper spacing (20 spaces)
         return "{0:20}".format(string)
 
+    def calculateExpression(self, reg):
+        if self.format == 'L':
+            # L Format [ Operation rt, IMM(rs) ]
+
+        elif self.format == 'R':
+            # R Format [ Operation rd, rs, rt ]
+            # reg refers to global registers that are printed while self.registers refers to rt, rs, and rd registers after the expression
+            if self.operand == 'and':
+                reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
+            elif self.operand == 'sub':
+                reg[self.register[0]] = reg[self.register[1]] - reg[self.register[2]]
+
+        else:
+            # J Format [ OP Label ]
+            return
+
+
+
+
+
+
+
+
+
+
+
 
 # This is a function to take in the operation, the unseperated registers and the array to registers
 # and then return the desired calculation
 def calculation(opp, order, reg):
-    # Seperate the input based on comma's
+    # Separate the input based on comma's
     c = order.split(",")
     # Check if the 'add' operation
     if opp == "add":
@@ -270,7 +300,7 @@ def main():
         print("error")
         exit(1)
 
-    # Check Arg[1] for forwarding option
+    # Check argv[1] for forwarding option
     if sys.argv[1].upper() == 'N':
         optionForwarding = " (no forwarding)"
     else:
@@ -297,6 +327,10 @@ def main():
             # Check the last expression to see if its completed the IF stage before the second node can execute
             if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
                 MIPSExpressions[i].canExecute = True
+            # Calculate Registers on WB Cycle
+            if MIPSExpressions[i].currentCycle == 5:
+                MIPSExpressions[i].calculateExpression(registers)
+
             # Print the Expression
             print(MIPSExpressions[i])
             # If the Expression can execute increment cycle so next step can execute
