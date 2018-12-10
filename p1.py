@@ -98,141 +98,6 @@ class Expression:
             return
 
 
-# This is a function to take in the operation, the unseperated registers and the array to registers
-# and then return the desired calculation
-
-def calculation(opp, order, reg):
-    # Separate the input based on comma's
-    c = order.split(",")
-
-    # Check if the 'add' operation
-    if opp == "add":
-        s1 = 0
-        s2 = 0
-        # Find the correct registers and add the values
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-            elif reg[i][0] == c[2]:
-                s2 = reg[i][1]
-        answer = s1 + s2
-        return answer
-    # Check if the 'addi' operation
-    elif opp == "addi":
-        s1 = 0
-        # Find the one register and add the constant
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-        answer = s1 + int(c[2])
-        return answer
-    # Check if the 'and' operation
-    elif opp == "and":
-        s1 = 0
-        s2 = 0
-        # Find the two registers and logical 'and' them
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-            elif reg[i][0] == c[2]:
-                s2 = reg[i][1]
-        answer = s1 & s2
-        return answer
-    # Check if the 'andi' operation
-    elif opp == "andi":
-        s1 = 0
-        # Find the one register and then logical 'and' with constant
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-        answer = s1 & int(c[2])
-        return answer
-    # Check if the 'or' operation
-    elif opp == "or":
-        s1 = 0
-        s2 = 0
-        # Find the two registers and logical 'or' them
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-            elif reg[i][0] == c[2]:
-                s2 = reg[i][1]
-        answer = s1 | s2
-        return answer
-    # Check if the 'ori' function
-    elif opp == "ori":
-        s1 = 0
-        # Find the one register and logical 'or' with the constant
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-        answer = s1 | int(c[2])
-        return answer
-    # Check if 'slt' operation
-    elif opp == "slt":
-        s1 = 0
-        s2 = 0
-        # Find the two registers and then check if s1 is less than s2
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-            elif reg[i][0] == c[2]:
-                s2 = reg[i][1]
-        # Return either 0 or 1 based on result
-        if s1 < s2:
-            answer = 0
-        else:
-            answer = 1
-        return answer
-    # Check if 'slti' operation
-    elif opp == "slti":
-        s1 = 0
-        # Find the one register and then check if less than constant
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-        # Return either 0 or 1 based on result
-        if s1 < int(c[2]):
-            answer = 0
-        else:
-            answer = 1
-        return answer
-    # Check if operation is 'beq'
-    elif opp == "beq":
-        s1 = 0
-        s2 = 0
-        # Find the two registers
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-            elif reg[i][0] == c[2]:
-                s2 = reg[i][1]
-        # Return either Yj, yes jump, or Nj, no jump, based on equaltiy
-        if s1 == s2:
-            answer = "Yj"
-        else:
-            answer = "Nj"
-        return answer
-    # Check if operation is 'bne'
-    elif opp == "bne":
-        s1 = 0
-        s2 = 0
-        # Find the two registers
-        for i in range(0, len(reg)):
-            if reg[i][0] == c[1]:
-                s1 = reg[i][1]
-            elif reg[i][0] == c[2]:
-                s2 = reg[i][1]
-        # Check if they are not equal and return Yj, yes jump, or Nj, no jump
-        if s1 != s2:
-            answer = "Yj"
-        else:
-            answer = "Nj"
-        return answer
-    # Else the operation is not found
-    return "opp not found"
-
-
 # A function to determine if a nop is needed at any given line, i
 # It takes in: i, as well as the array of lines
 def add_nop(i, sblock):
@@ -371,6 +236,144 @@ def main():
 
 
 '''
+
+
+
+# This is a function to take in the operation, the unseperated registers and the array to registers
+# and then return the desired calculation
+
+def calculation(opp, order, reg):
+    # Separate the input based on comma's
+    c = order.split(",")
+
+    # Check if the 'add' operation
+    if opp == "add":
+        s1 = 0
+        s2 = 0
+        # Find the correct registers and add the values
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+            elif reg[i][0] == c[2]:
+                s2 = reg[i][1]
+        answer = s1 + s2
+        return answer
+    # Check if the 'addi' operation
+    elif opp == "addi":
+        s1 = 0
+        # Find the one register and add the constant
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+        answer = s1 + int(c[2])
+        return answer
+    # Check if the 'and' operation
+    elif opp == "and":
+        s1 = 0
+        s2 = 0
+        # Find the two registers and logical 'and' them
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+            elif reg[i][0] == c[2]:
+                s2 = reg[i][1]
+        answer = s1 & s2
+        return answer
+    # Check if the 'andi' operation
+    elif opp == "andi":
+        s1 = 0
+        # Find the one register and then logical 'and' with constant
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+        answer = s1 & int(c[2])
+        return answer
+    # Check if the 'or' operation
+    elif opp == "or":
+        s1 = 0
+        s2 = 0
+        # Find the two registers and logical 'or' them
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+            elif reg[i][0] == c[2]:
+                s2 = reg[i][1]
+        answer = s1 | s2
+        return answer
+    # Check if the 'ori' function
+    elif opp == "ori":
+        s1 = 0
+        # Find the one register and logical 'or' with the constant
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+        answer = s1 | int(c[2])
+        return answer
+    # Check if 'slt' operation
+    elif opp == "slt":
+        s1 = 0
+        s2 = 0
+        # Find the two registers and then check if s1 is less than s2
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+            elif reg[i][0] == c[2]:
+                s2 = reg[i][1]
+        # Return either 0 or 1 based on result
+        if s1 < s2:
+            answer = 0
+        else:
+            answer = 1
+        return answer
+    # Check if 'slti' operation
+    elif opp == "slti":
+        s1 = 0
+        # Find the one register and then check if less than constant
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+        # Return either 0 or 1 based on result
+        if s1 < int(c[2]):
+            answer = 0
+        else:
+            answer = 1
+        return answer
+    # Check if operation is 'beq'
+    elif opp == "beq":
+        s1 = 0
+        s2 = 0
+        # Find the two registers
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+            elif reg[i][0] == c[2]:
+                s2 = reg[i][1]
+        # Return either Yj, yes jump, or Nj, no jump, based on equaltiy
+        if s1 == s2:
+            answer = "Yj"
+        else:
+            answer = "Nj"
+        return answer
+    # Check if operation is 'bne'
+    elif opp == "bne":
+        s1 = 0
+        s2 = 0
+        # Find the two registers
+        for i in range(0, len(reg)):
+            if reg[i][0] == c[1]:
+                s1 = reg[i][1]
+            elif reg[i][0] == c[2]:
+                s2 = reg[i][1]
+        # Check if they are not equal and return Yj, yes jump, or Nj, no jump
+        if s1 != s2:
+            answer = "Yj"
+        else:
+            answer = "Nj"
+        return answer
+    # Else the operation is not found
+    return "opp not found"
+
+
 
     register = [['$s0', 0], ['$s1', 0], ['$s2', 0], ['$s3', 0], ['$s4', 0], ['$s5', 0], ['$s6', 0], ['$s7', 0],
                 ['$t0', 0], ['$t1', 0], ['$t2', 0], ['$t3', 0], ['$t4', 0], ['$t5', 0], ['$t6', 0], ['$t7', 0],
