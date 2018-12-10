@@ -243,31 +243,14 @@ def main():
 
     registers = {
         # S Registers
-        "$s0": 0,
-        "$s1": 0,
-        "$s2": 0,
-        "$s3": 0,
-        "$s4": 0,
-        "$s5": 0,
-        "$s6": 0,
-        "$s7": 0,
+        "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
+        "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
 
         # T Registers
-        "$t0": 0,
-        "$t1": 0,
-        "$t2": 0,
-        "$t3": 0,
-        "$t4": 0,
-        "$t5": 0,
-        "$t6": 0,
-        "$t7": 0,
-        "$t8": 0,
-        "$t9": 0,
+        "$t0": 0, "$t1": 0, "$t2": 0, "$t3": 0, "$t4": 0,
+        "$t5": 0, "$t6": 0, "$t7": 0, "$t8": 0, "$t9": 0,
     }
 
-    register = [['$s0', 0], ['$s1', 0], ['$s2', 0], ['$s3', 0], ['$s4', 0], ['$s5', 0], ['$s6', 0], ['$s7', 0],
-                ['$t0', 0], ['$t1', 0], ['$t2', 0], ['$t3', 0], ['$t4', 0], ['$t5', 0], ['$t6', 0], ['$t7', 0],
-                ['$t8', 0], ['$t9', 0]]
     saparateline = '{:-^82}'.format('')
     lineCount = 0
     with open(sys.argv[2], 'r') as file:
@@ -277,11 +260,8 @@ def main():
             line = file.readline()
             lineCount = lineCount + 1
 
-
-
     print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
-
 
     while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
         print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
@@ -295,12 +275,18 @@ def main():
         for key, value in registers.items():
             if i % 4 == 0 and i != 0:
                 print(end='\n')
-            print(key + ' = ' + str(value), end = '\t\t')
+            print("{0:20}".format(key + ' = ' + str(value)), end='')
 
             i += 1
         print(end='\n')
         print(saparateline)
+
+
 '''
+
+    register = [['$s0', 0], ['$s1', 0], ['$s2', 0], ['$s3', 0], ['$s4', 0], ['$s5', 0], ['$s6', 0], ['$s7', 0],
+                ['$t0', 0], ['$t1', 0], ['$t2', 0], ['$t3', 0], ['$t4', 0], ['$t5', 0], ['$t6', 0], ['$t7', 0],
+                ['$t8', 0], ['$t9', 0]]
     sblock = []
     print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
