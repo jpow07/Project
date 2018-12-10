@@ -1,5 +1,5 @@
 """
-This code is written by Isaac Sibley, Jordan Powell, and ______ for the Comp Org group project.
+This code is written by Isaac Sibley, Jordan Powell, and Jacob for the Comp Org group project.
 
 The purpose of this code is to read in a mips file and to output up to the first 16 clock cycles.
 
