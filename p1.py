@@ -21,7 +21,7 @@ class Expression:
 
     def __str__(self):
         spacing = 16 - self.offset - self.currentCycle
-        string = self.statement
+        string = self.statement + '\t'
 
         if self.offset > 0:
             for i in range(self.offset):
@@ -30,7 +30,7 @@ class Expression:
             string += '\t' + self.stages[i]
         for i in range(spacing):
             string += '\t.'
-        return string + '\n'
+        return "{0:20}".format(string) + '\n'
 
 
 # This is a function to take in the operation, the unseperated registers and the array to registers
@@ -290,7 +290,7 @@ def main():
 
     print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
-    print("CPU Cycles ===>\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
+    print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
 
     for i in range(len(list1)):
         print(list1[i], end='')
