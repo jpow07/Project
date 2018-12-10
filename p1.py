@@ -6,6 +6,25 @@ The purpose of this code is to read in a mips file and to output up to the first
 """
 import sys
 
+class Expression:
+    def __init__(self, statement):
+        self.statement = statement
+        temp = statement.split(' ')
+        self.operand = temp[0]
+        self.registers = temp[1].split(',')
+        self.currentCycle = 0
+        self.isWaiting = 0
+
+
+    def __str__(self):
+        string = self.operand + " "
+        for i in range(0,2):
+            string +=  self.registers[i] + ","
+        string += self.registers[2]
+        return string
+
+
+
 #This is a function to take in the operation, the unseperated registers and the array to registers
 #and then return the desired calculation
 def calculation(opp, order, reg):
@@ -201,8 +220,15 @@ def add_nop(i, sblock):
 
 #A main function to be the driver for our code
 def main():
+
+    # TODO: Delete this after testing
+    # TEST TEST TEST  TEST #
+    x = Expression("add $s0,$t1,$s5")
+    print(x)
+    # TEST TEST ^^^^ TEST TEST #
+
     # Check Arg[1] for forwarding option
-    if sys.argv[1].upper() == 'N':
+    if sys.argv[0].upper() == 'N':
         optionForwarding = " (no forwarding)"
     else:
         optionForwarding = " (forwarding)"
@@ -282,7 +308,7 @@ def main():
         for l in sblock:
             for j in range(0, len(l)):
                 if j == 0:
-                    print("{:20}".format(l[j]), end = '')
+                    print("{:20}".format(l[j]), end='')
                 else:
                     print("{:4s}".format(l[j]), end='')
             print()
