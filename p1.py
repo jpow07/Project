@@ -17,10 +17,12 @@ class Expression:
 
 
     def __str__(self):
+        return self.statement
         string = self.operand + " "
         for i in range(0,2):
-            string +=  self.registers[i] + ","
-        string += self.registers[2]
+            if i < len(self.registers) - 1:
+                string +=  self.registers[i] + ","
+
         return string
 
 
@@ -220,15 +222,19 @@ def add_nop(i, sblock):
 
 #A main function to be the driver for our code
 def main():
+    list1 = []
 
     # TODO: Delete this after testing
     # TEST TEST TEST  TEST #
+    print("TEST TEST TEST")
     x = Expression("add $s0,$t1,$s5")
     print(x)
+    print("TEST TEST TEST\n\n")
+
     # TEST TEST ^^^^ TEST TEST #
 
     # Check Arg[1] for forwarding option
-    if sys.argv[0].upper() == 'N':
+    if sys.argv[1].upper() == 'N':
         optionForwarding = " (no forwarding)"
     else:
         optionForwarding = " (forwarding)"
@@ -238,8 +244,17 @@ def main():
                 ['$t0', 0], ['$t1', 0], ['$t2', 0], ['$t3', 0], ['$t4', 0], ['$t5', 0], ['$t6', 0], ['$t7', 0],
                 ['$t8', 0], ['$t9', 0]]
     saparateline = '----------------------------------------------------------------------------------'
-    with open('ex03.s', 'r') as f1:
-        list1 = f1.readlines()
+
+    with open(sys.argv[2], 'r') as file:
+        line = file.readline()
+        while line:
+            list1.append(Expression(line))
+            line = file.readline()
+
+    for i in range(len(list1)):
+        print(list1[i], end='')
+
+'''
     sblock = []
     print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
@@ -408,7 +423,7 @@ def main():
         counter1 = counter1 + 1
     print('END OF SIMULATION')
 
-
+'''
 if __name__ == "__main__":
     main()
 
