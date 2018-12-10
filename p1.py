@@ -71,20 +71,9 @@ class Expression:
             if self.operand == 'add':
                 reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
             elif self.operand == 'addi':
-                reg[self.register[0]] = reg[self.register[1]] + self.register[2]
+                reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
             elif self.operand == 'sub':
                 reg[self.register[0]] = reg[self.register[1]] - reg[self.register[2]]
-            elif self.operand == 'subi':
-                reg[self.register[0]] = reg[self.register[1]] - self.register[2]
-            elif self.operand == 'and':
-                reg[self.register[0]] = reg[self.register[1]] & reg[self.register[2]]
-            elif self.operand == 'andi':
-                reg[self.register[0]] = reg[self.register[1]] & self.register[2]
-            elif self.operand == 'or':
-                reg[self.register[0]] = reg[self.register[1]] | reg[self.register[2]]
-            elif self.operand == 'ori':
-                reg[self.register[0]] = reg[self.register[1]] | self.register[2]
-
 
         else:
             # J Format [ OP Label ]
@@ -226,62 +215,40 @@ def calculation(opp, order, reg):
 
 # A function to determine if a nop is needed at any given line, i
 # It takes in: i, as well as the array of lines
-def add_nop(i, sblock):
+def add_nop(i, MIPSExpressions):
     nop_exist = False
     nop_num = 0
-    output = [nop_exist, sblock, nop_num]
+    line = MIPSExpressions[i].operand
+    up_line = MIPSExpressions[i-1].operand
+    upper_line = MIPSExpressions[i-2].operand
+
+    output = [nop_exist, nop_num]
     # Check if the first line
     if i == 1:
         # Check if the previous values of nops
-        if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop":
-            l1 = sblock[i][0].split(' ')[1].split(',')
-            l2 = sblock[i - 1][0].split(' ')[1].split(',')
+        if line != "nop" and up_line != "nop":
+            l1 = MIPSExpressions[i].register
+            l2 = MIPSExpressions[i - 1].register
             # Run through all the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
-                    if "MEM" in sblock[i - 1]:
                         output[0] = True
-                        output[2] = output[2] + 2
-                        sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop"
-                        sline[i + 1] = "IF"
-                        sline[i + 2] = "ID"
-                        sline[i + 3] = "*"
-                        sblock.insert(i, sline)
-                        sblock.insert(i, sline)
-                        output[1] = sblock
+                        output[1] = output[1] + 2
     # Else if any other line
     elif i > 1:
         # Check if previous are nops
-        if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop" and sblock[i - 2][0] != "nop":
-            l1 = sblock[i][0].split(' ')[1].split(',')
-            l2 = sblock[i - 1][0].split(' ')[1].split(',')
-            l3 = sblock[i - 2][0].split(' ')[1].split(',')
+        if line != "nop" and up_line != "nop" and upper_line != "nop":
+            l1 = MIPSExpressions[i].register
+            l2 = MIPSExpressions[i - 1].register
+            l3 = MIPSExpressions[i - 2].register
             # RUn through the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
-                    if "MEM" in sblock[i - 1]:
                         output[0] = True
-                        output[2] = output[2] + 2
-                        sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop"
-                        sline[i + 1] = "IF"
-                        sline[i + 2] = "ID"
-                        sline[i + 3] = "*"
-                        sblock.insert(i, sline)
-                        sblock.insert(i, sline)
-                        output[1] = sblock
+                        output[1] = output[1] + 2
                 if l1[elements] == l3[0]:
-                    if "MEM" in sblock[i - 1]:
                         output[0] = True
-                        output[2] = output[2] + 1
-                        sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop"
-                        sline[i + 1] = "IF"
-                        sline[i + 2] = "ID"
-                        sline[i + 3] = "*"
-                        sblock.insert(i, sline)
-                        output[1] = sblock
+                        output[1] = output[1] + 1
     return output
 
 
@@ -329,6 +296,9 @@ def main():
     while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
         print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
         for i in range(len(MIPSExpressions)):
+            nop_opp = add_nop(i, MIPSExpressions)
+            if nop_opp[0] is True:
+                MIPSExpressions[i].isWaiting += nop_opp[1]
             # Check the last expression to see if its completed the IF stage before the second node can execute
             if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
                 MIPSExpressions[i].canExecute = True
