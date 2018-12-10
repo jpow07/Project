@@ -78,6 +78,7 @@ class Expression:
             if self.operand == 'add':
                 reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
             elif self.operand == 'addi':
+
                 reg[self.register[0]] = reg[self.register[1]] + int(self.register[2])
             elif self.operand == 'sub':
                 reg[self.register[0]] = reg[self.register[1]] - reg[self.register[2]]
@@ -92,75 +93,55 @@ class Expression:
             elif self.operand == 'ori':
                 reg[self.register[0]] = reg[self.register[1]] | int(self.register[2])
                 
+
         else:
             # J Format [ OP Label ]
             return
 
 
+
 # A function to determine if a nop is needed at any given line, i
 # It takes in: i, as well as the array of lines
-def add_nop(i, sblock):
+def add_nop(i, MIPSExpressions):
     nop_exist = False
     nop_num = 0
-    output = [nop_exist, sblock, nop_num]
+    line = MIPSExpressions[i].operand
+    up_line = MIPSExpressions[i-1].operand
+    upper_line = MIPSExpressions[i-2].operand
+
+    output = [nop_exist, nop_num]
     # Check if the first line
     if i == 1:
         # Check if the previous values of nops
-        if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop":
-            l1 = sblock[i][0].split(' ')[1].split(',')
-            l2 = sblock[i - 1][0].split(' ')[1].split(',')
+        if line != "nop" and up_line != "nop":
+            l1 = MIPSExpressions[i].register
+            l2 = MIPSExpressions[i - 1].register
             # Run through all the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
-                    if "MEM" in sblock[i - 1]:
                         output[0] = True
-                        output[2] = output[2] + 2
-                        sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop"
-                        sline[i + 1] = "IF"
-                        sline[i + 2] = "ID"
-                        sline[i + 3] = "*"
-                        sblock.insert(i, sline)
-                        sblock.insert(i, sline)
-                        output[1] = sblock
+                        output[1] = output[1] + 2
     # Else if any other line
     elif i > 1:
         # Check if previous are nops
-        if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop" and sblock[i - 2][0] != "nop":
-            l1 = sblock[i][0].split(' ')[1].split(',')
-            l2 = sblock[i - 1][0].split(' ')[1].split(',')
-            l3 = sblock[i - 2][0].split(' ')[1].split(',')
+        if line != "nop" and up_line != "nop" and upper_line != "nop":
+            l1 = MIPSExpressions[i].register
+            l2 = MIPSExpressions[i - 1].register
+            l3 = MIPSExpressions[i - 2].register
             # RUn through the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
-                    if "MEM" in sblock[i - 1]:
                         output[0] = True
-                        output[2] = output[2] + 2
-                        sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop"
-                        sline[i + 1] = "IF"
-                        sline[i + 2] = "ID"
-                        sline[i + 3] = "*"
-                        sblock.insert(i, sline)
-                        sblock.insert(i, sline)
-                        output[1] = sblock
+                        output[1] = output[1] + 2
                 if l1[elements] == l3[0]:
-                    if "MEM" in sblock[i - 1]:
                         output[0] = True
-                        output[2] = output[2] + 1
-                        sline = ["", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", ".", "."]
-                        sline[0] = "nop"
-                        sline[i + 1] = "IF"
-                        sline[i + 2] = "ID"
-                        sline[i + 3] = "*"
-                        sblock.insert(i, sline)
-                        output[1] = sblock
+                        output[1] = output[1] + 1
     return output
 
 
 # A main function to be the driver for our code
 def main():
-    ''' Variables '''
+    # Variables
     MIPSExpressions = []  # Hold the MIPS Expressions
     saparateline = '{:-^82}'.format('')  # Print a dashed Line
     registers = {  # Hold the registers as a dictionary
@@ -174,7 +155,7 @@ def main():
         "$t5": 0, "$t6": 0, "$t7": 0, "$t8": 0, "$t9": 0,
     }
 
-    ''' Check Command line Arguments'''
+    # Check Command line Arguments
     if len(sys.argv) != 3:
         print("error")
         exit(1)
@@ -185,7 +166,7 @@ def main():
     else:
         optionForwarding = " (forwarding)"
 
-    ''' Read the File; Create Expressions with statement and Offset '''
+    # Read the File; Create Expressions with statement and Offset
     lineCount = 0
     with open(sys.argv[2], 'r') as file:
         line = file.readline()
@@ -194,7 +175,7 @@ def main():
             line = file.readline()
             lineCount = lineCount + 1
 
-    ''' Print The Simulation '''
+    # Print The Simulation
     print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
 
@@ -208,7 +189,7 @@ def main():
                 MIPSExpressions[i].canExecute = True
 
             # Calculate Registers on WB Cycle
-            if MIPSExpressions[i].currentCycle == 4:
+            if MIPSExpressions[i].currentCycle == 5:
                 MIPSExpressions[i].calculateExpression(registers)
 
             # Print the Expression
@@ -371,6 +352,86 @@ def calculation(opp, order, reg):
         return answer
     # Else the operation is not found
     return "opp not found"
+
+
+
+
+
+# A main function to be the driver for our code
+def main():
+    # Variables
+    MIPSExpressions = []  # Hold the MIPS Expressions
+    saparateline = '{:-^82}'.format('')  # Print a dashed Line
+    registers = {  # Hold the registers as a dictionary
+        # S Registers
+        "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
+        "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
+
+        # T Registers
+        "$t0": 0, "$t1": 0, "$t2": 0, "$t3": 0, "$t4": 0,
+        "$t5": 0, "$t6": 0, "$t7": 0, "$t8": 0, "$t9": 0,
+    }
+
+    # Check Command line Arguments 
+    if len(sys.argv) != 3:
+        print("error")
+        exit(1)
+
+    # Check argv[1] for forwarding option
+    if sys.argv[1].upper() == 'N':
+        optionForwarding = " (no forwarding)"
+    else:
+        optionForwarding = " (forwarding)"
+
+    # Read the File; Create Expressions with statement and Offset
+    lineCount = 0
+    with open(sys.argv[2], 'r') as file:
+        line = file.readline()
+        while line:
+            MIPSExpressions.append(Expression(line.rstrip('\n'), lineCount))
+            line = file.readline()
+            lineCount = lineCount + 1
+
+    # Print The Simulation
+    print('START OF SIMULATION' + optionForwarding)
+    print(saparateline)
+
+    # TODO: I believe were supposed to stop after 48 cycles so we might have to change this to correct number of cycles
+    # Loop through MIPS Simulator until all instructions have WB.
+    while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
+        print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
+        for i in range(len(MIPSExpressions)):
+            nop_opp = add_nop(i, MIPSExpressions)
+            if nop_opp[0] is True:
+                MIPSExpressions[i].isWaiting += nop_opp[1]
+            # Check the last expression to see if its completed the IF stage before the second node can execute
+            if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
+                MIPSExpressions[i].canExecute = True
+            # Calculate Registers on WB Cycle
+            if MIPSExpressions[i].currentCycle == 5:
+                MIPSExpressions[i].calculateExpression(registers)
+
+            # Print the Expression
+            print(MIPSExpressions[i])
+            # If the Expression can execute increment cycle so next step can execute
+            if MIPSExpressions[i].canExecute:
+                MIPSExpressions[i].currentCycle += 1
+
+        print(end='\n')  # Print Newline
+
+        # Print Dictionary; set newline every 4 registers
+        i = 0
+        for key, value in registers.items():
+            if i % 4 == 0 and i != 0:
+                print(end='\n')
+            print("{0:20}".format(key + ' = ' + str(value)), end='')
+
+            i += 1
+        print(end='\n')
+        print(saparateline)
+    print('END OF SIMULATION')
+
+
 
 
 
