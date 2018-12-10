@@ -188,10 +188,10 @@ def main():
             if MIPSExpressions[i].currentCycle == 5:
                 MIPSExpressions[i].calculateExpression(registers)
 
-            # Print the Expression
-            print(MIPSExpressions[i])
             # If the Expression can execute increment cycle so next step can execute
             if MIPSExpressions[i].canExecute:
+                # Print the Expression
+                print(MIPSExpressions[i])
                 MIPSExpressions[i].currentCycle += 1
 
         print(end='\n')  # Print Newline
