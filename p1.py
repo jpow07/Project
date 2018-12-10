@@ -229,16 +229,7 @@ def add_nop(i, sblock):
 
 # A main function to be the driver for our code
 def main():
-    list1 = []
-
-    # TODO: Delete this after testing
-    # TEST TEST TEST  TEST #
-    print("TEST TEST TEST")
-    x = Expression("add $s0,$t1,$s5", 0)
-    print(x)
-    print("TEST TEST TEST\n\n")
-
-    # TEST TEST ^^^^ TEST TEST #
+    MIPSExpressions = []
 
     if len(sys.argv) != 3:
         print("error")
@@ -282,7 +273,7 @@ def main():
     with open(sys.argv[2], 'r') as file:
         line = file.readline()
         while line:
-            list1.append(Expression(line.rstrip('\n'), lineCount))
+            MIPSExpressions.append(Expression(line.rstrip('\n'), lineCount))
             line = file.readline()
             lineCount = lineCount + 1
 
@@ -292,8 +283,17 @@ def main():
     print(saparateline)
     print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
 
-    for i in range(len(list1)):
-        print(list1[i], end='')
+    for i in range(len(MIPSExpressions)):
+        print(MIPSExpressions[i], end='')
+    print(end='\n')
+
+    i = 0
+    for key, value in registers.items():
+        if i % 4 == 0 and i != 0:
+            print('\n')
+        print(key + ' = ' + str(value), end = '\t\t')
+
+        i += 1
 
 '''
     sblock = []
