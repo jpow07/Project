@@ -50,15 +50,12 @@ class Expression:
                 string += '.\t'
         # Print previous to current cycle
         for i in range(self.currentCycle):
-
             string += self.stages[i] + '\t'
         # Print asterisk if waiting
 
         if self.isWaiting:
             print("{0:20}".format('nop') + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.')
             for i in range(self.isWaiting):
-
-
                 string += '*\t'
 
         # Print Trailing decimal points
@@ -92,12 +89,11 @@ class Expression:
                 reg[self.register[0]] = reg[self.register[1]] | reg[self.register[2]]
             elif self.operand == 'ori':
                 reg[self.register[0]] = reg[self.register[1]] | int(self.register[2])
-                
+
 
         else:
             # J Format [ OP Label ]
             return
-
 
 
 # A function to determine if a nop is needed at any given line, i
@@ -106,8 +102,8 @@ def add_nop(i, MIPSExpressions):
     nop_exist = False
     nop_num = 0
     line = MIPSExpressions[i].operand
-    up_line = MIPSExpressions[i-1].operand
-    upper_line = MIPSExpressions[i-2].operand
+    up_line = MIPSExpressions[i - 1].operand
+    upper_line = MIPSExpressions[i - 2].operand
 
     output = [nop_exist, nop_num]
     # Check if the first line
@@ -119,8 +115,8 @@ def add_nop(i, MIPSExpressions):
             # Run through all the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
-                        output[0] = True
-                        output[1] = output[1] + 2
+                    output[0] = True
+                    output[1] = output[1] + 2
     # Else if any other line
     elif i > 1:
         # Check if previous are nops
@@ -131,11 +127,11 @@ def add_nop(i, MIPSExpressions):
             # RUn through the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
-                        output[0] = True
-                        output[1] = output[1] + 2
+                    output[0] = True
+                    output[1] = output[1] + 2
                 if l1[elements] == l3[0]:
-                        output[0] = True
-                        output[1] = output[1] + 1
+                    output[0] = True
+                    output[1] = output[1] + 1
     return output
 
 
@@ -145,7 +141,7 @@ def main():
     MIPSExpressions = []  # Hold the MIPS Expressions
     saparateline = '{:-^82}'.format('')  # Print a dashed Line
     registers = {  # Hold the registers as a dictionary
-        "$zero": 0,
+        "$zero": 0, "$at": 0,
         # S Registers
         "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
         "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
@@ -203,7 +199,7 @@ def main():
         # Print Dictionary; set newline every 4 registers
         i = 0
         for key, value in registers.items():
-            if(key == '$zero' or key == '$at'):
+            if (key == '$zero' or key == '$at'):
                 continue
             if i % 4 == 0 and i != 0:
                 print(end='\n')
