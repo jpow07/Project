@@ -141,7 +141,7 @@ def main():
     MIPSExpressions = []  # Hold the MIPS Expressions
     saparateline = '{:-^82}'.format('')  # Print a dashed Line
     registers = {  # Hold the registers as a dictionary
-        "$zero": 0, "$at": 0,
+        "$zero": 0, "$ra": 0,
         # S Registers
         "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
         "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
@@ -199,7 +199,7 @@ def main():
         # Print Dictionary; set newline every 4 registers
         i = 0
         for key, value in registers.items():
-            if (key == '$zero' or key == '$at'):
+            if (key == '$zero' or key == '$ra'):
                 continue
             if i % 4 == 0 and i != 0:
                 print(end='\n')
