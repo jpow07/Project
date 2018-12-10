@@ -50,7 +50,7 @@ class Expression:
                 string += '.\t'
         # Print previous to current cycle
         for i in range(self.currentCycle):
-            string +=  self.stages[i] + '\t'
+            string += self.stages[i] + '\t'
         # Print asterisk if waiting
         if self.isWaiting:
             for i in range(self.isWaiting):
@@ -66,9 +66,11 @@ class Expression:
             # L Format [ Operation rt, IMM(rs) ]
             return
         elif self.format == 'R':
-            # R Format [ Operation rd, rs, rt ]
-            # reg refers to global registers that are printed while self.registers refers to rt, rs, and rd registers after the expression
-            if self.operand == 'and':
+            # R Format [ Operation rd, rs, rt ] reg refers to global registers that are printed while self.registers
+            # refers to rt, rs, and rd registers after the expression
+            if self.operand == 'add':
+                reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
+            elif self.operand == 'addi':
                 reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
             elif self.operand == 'sub':
                 reg[self.register[0]] = reg[self.register[1]] - reg[self.register[2]]
@@ -76,16 +78,6 @@ class Expression:
         else:
             # J Format [ OP Label ]
             return
-
-
-
-
-
-
-
-
-
-
 
 
 # This is a function to take in the operation, the unseperated registers and the array to registers
@@ -285,9 +277,9 @@ def add_nop(i, sblock):
 # A main function to be the driver for our code
 def main():
     ''' Variables '''
-    MIPSExpressions = []                   # Hold the MIPS Expressions
-    saparateline = '{:-^82}'.format('')    # Print a dashed Line
-    registers = {                          # Hold the registers as a dictionary
+    MIPSExpressions = []  # Hold the MIPS Expressions
+    saparateline = '{:-^82}'.format('')  # Print a dashed Line
+    registers = {  # Hold the registers as a dictionary
         # S Registers
         "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
         "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
@@ -339,7 +331,7 @@ def main():
             if MIPSExpressions[i].canExecute:
                 MIPSExpressions[i].currentCycle += 1
 
-        print(end='\n') # Print Newline
+        print(end='\n')  # Print Newline
 
         # Print Dictionary; set newline every 4 registers
         i = 0
@@ -352,12 +344,6 @@ def main():
         print(end='\n')
         print(saparateline)
     print('END OF SIMULATION')
-
-
-
-
-
-
 
 
 '''
