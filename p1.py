@@ -33,36 +33,38 @@ class Expression:
             self.currentCycle = 5
 
         # Calculate Spacing for trailing decimal point
-        spacing = 16 - self.offset - self.currentCycle
+        if self.isWaiting:
+            spacing = 16 - self.offset - self.currentCycle - self.isWaiting
+            string = "{0:20}".format('nop')
+        else:
+            spacing = 16 - self.offset - self.currentCycle
+            string = "{0:20}".format(self.statement)
 
         # Print blank Line if Cannot execute
         if not self.canExecute:
             return "{0:20}".format(self.statement) + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.'
 
-        # Print String if it can execute
-        string = self.statement + '\t'
         # Print offset decimal
         if self.offset > 0:
             for i in range(self.offset):
-                string += '\t.'
+                string += '.\t'
         # Print previous to current cycle
         for i in range(self.currentCycle):
-            string += '\t' + self.stages[i]
-        # Print asterick if waiting
+            string +=  self.stages[i] + '\t'
+        # Print asterisk if waiting
         if self.isWaiting:
             for i in range(self.isWaiting):
-                string += '\t*'
-                self.isWaiting += 1
+                string += '*\t'
         # Print Trailing decimal points
         for i in range(spacing):
-            string += '\t.'
+            string += '.\t'
         # Return the string with proper spacing (20 spaces)
-        return "{0:20}".format(string)
+        return string
 
     def calculateExpression(self, reg):
         if self.format == 'L':
             # L Format [ Operation rt, IMM(rs) ]
-
+            return
         elif self.format == 'R':
             # R Format [ Operation rd, rs, rt ]
             # reg refers to global registers that are printed while self.registers refers to rt, rs, and rd registers after the expression
