@@ -33,72 +33,77 @@ class Expression:
             self.currentCycle = 5
 
         # Calculate Spacing for trailing decimal point
-        spacing = 16 - self.offset - self.currentCycle
+        if self.isWaiting:
+            spacing = 16 - self.offset - self.currentCycle - self.isWaiting
+            string = "{0:20}".format('nop')
+        else:
+            spacing = 16 - self.offset - self.currentCycle
+            string = "{0:20}".format(self.statement)
 
         # Print blank Line if Cannot execute
         if not self.canExecute:
             return "{0:20}".format(self.statement) + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.'
 
-        # Print String if it can execute
-        string = self.statement + '\t'
         # Print offset decimal
         if self.offset > 0:
             for i in range(self.offset):
-                string += '\t.'
+                string += '.\t'
         # Print previous to current cycle
         for i in range(self.currentCycle):
-            string += '\t' + self.stages[i]
-        # Print asterick if waiting and decrease spacing for trailing decimal point
+
+            string += self.stages[i] + '\t'
+        # Print asterisk if waiting
+
         if self.isWaiting:
             print("{0:20}".format('nop') + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.')
             for i in range(self.isWaiting):
-                string += '\t*'
-                self.isWaiting += 1
-                spacing -= self.isWaiting
+
+
+                string += '*\t'
+
         # Print Trailing decimal points
         for i in range(spacing):
-            string += '\t.'
+            string += '.\t'
         # Return the string with proper spacing (20 spaces)
-        return "{0:20}".format(string)
+        return string
 
     def calculateExpression(self, reg):
         if self.format == 'L':
             # L Format [ Operation rt, IMM(rs) ]
-
+            return
         elif self.format == 'R':
-            # R Format [ Operation rd, rs, rt ]
-            # reg refers to global registers that are printed while self.registers refers to rt, rs, and rd registers after the expression
-            if self.operand == 'and':
+            # R Format [ Operation rd, rs, rt ] reg refers to global registers that are printed while self.registers
+            # refers to rt, rs, and rd registers after the expression
+            if self.operand == 'add':
                 reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
+            elif self.operand == 'addi':
+                reg[self.register[0]] = reg[self.register[1]] + self.register[2]
             elif self.operand == 'sub':
                 reg[self.register[0]] = reg[self.register[1]] - reg[self.register[2]]
+            elif self.operand == 'subi':
+                reg[self.register[0]] = reg[self.register[1]] - self.register[2]
+            elif self.operand == 'and':
+                reg[self.register[0]] = reg[self.register[1]] & reg[self.register[2]]
+            elif self.operand == 'andi':
+                reg[self.register[0]] = reg[self.register[1]] & self.register[2]
+            elif self.operand == 'or':
+                reg[self.register[0]] = reg[self.register[1]] | reg[self.register[2]]
+            elif self.operand == 'ori':
+                reg[self.register[0]] = reg[self.register[1]] | self.register[2]
+
 
         else:
             # J Format [ OP Label ]
             return
 
 
-
-
-
-
-
-
-
-
-
-
 # This is a function to take in the operation, the unseperated registers and the array to registers
 # and then return the desired calculation
-<<<<<<< HEAD
-def calculation(expression, reg):
-    opp = expression.operand
 
-=======
 def calculation(opp, order, reg):
     # Separate the input based on comma's
     c = order.split(",")
->>>>>>> master
+
     # Check if the 'add' operation
     if opp == "add":
         s1 = 0
@@ -291,9 +296,9 @@ def add_nop(i, sblock):
 # A main function to be the driver for our code
 def main():
     ''' Variables '''
-    MIPSExpressions = []                   # Hold the MIPS Expressions
-    saparateline = '{:-^82}'.format('')    # Print a dashed Line
-    registers = {                          # Hold the registers as a dictionary
+    MIPSExpressions = []  # Hold the MIPS Expressions
+    saparateline = '{:-^82}'.format('')  # Print a dashed Line
+    registers = {  # Hold the registers as a dictionary
         # S Registers
         "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
         "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
@@ -346,7 +351,7 @@ def main():
             if MIPSExpressions[i].canExecute:
                 MIPSExpressions[i].currentCycle += 1
 
-        print(end='\n') # Print Newline
+        print(end='\n')  # Print Newline
 
         # Print Dictionary; set newline every 4 registers
         i = 0
@@ -359,12 +364,6 @@ def main():
         print(end='\n')
         print(saparateline)
     print('END OF SIMULATION')
-
-
-
-
-
-
 
 
 '''
