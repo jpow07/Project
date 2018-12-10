@@ -24,24 +24,36 @@ class Expression:
             self.canExecute = True
 
     def __str__(self):
+        # Keep currentCycle in Bounds
         if self.currentCycle > 5:
             self.currentCycle = 5
-            
+
+        # Calculate Spacing for trailing decimal point
         spacing = 16 - self.offset - self.currentCycle
 
+        # Print blank Line if Cannot execute
         if not self.canExecute:
-            return "{0:20}".format(self.statement) + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n'
+            return "{0:20}".format(self.statement) + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.'
 
+        # Print String if it can execute
         string = self.statement + '\t'
-
+        # Print offset decimal
         if self.offset > 0:
             for i in range(self.offset):
                 string += '\t.'
+        # Print previous to current cycle
         for i in range(self.currentCycle):
             string += '\t' + self.stages[i]
+        # Print asterick if waiting
+        if self.isWaiting:
+            for i in range(self.isWaiting):
+                string += '\t*'
+                self.isWaiting += 1
+        # Print Trailing decimal points
         for i in range(spacing):
             string += '\t.'
-        return "{0:20}".format(string) + '\n'
+        # Return the string with proper spacing (20 spaces)
+        return "{0:20}".format(string)
 
 
 # This is a function to take in the operation, the unseperated registers and the array to registers
@@ -240,8 +252,20 @@ def add_nop(i, sblock):
 
 # A main function to be the driver for our code
 def main():
-    MIPSExpressions = []
+    ''' Variables '''
+    MIPSExpressions = []                   # Hold the MIPS Expressions
+    saparateline = '{:-^82}'.format('')    # Print a dashed Line
+    registers = {                          # Hold the registers as a dictionary
+        # S Registers
+        "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
+        "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
 
+        # T Registers
+        "$t0": 0, "$t1": 0, "$t2": 0, "$t3": 0, "$t4": 0,
+        "$t5": 0, "$t6": 0, "$t7": 0, "$t8": 0, "$t9": 0,
+    }
+
+    ''' Check Command line Arguments'''
     if len(sys.argv) != 3:
         print("error")
         exit(1)
@@ -252,17 +276,7 @@ def main():
     else:
         optionForwarding = " (forwarding)"
 
-    registers = {
-        # S Registers
-        "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
-        "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
-
-        # T Registers
-        "$t0": 0, "$t1": 0, "$t2": 0, "$t3": 0, "$t4": 0,
-        "$t5": 0, "$t6": 0, "$t7": 0, "$t8": 0, "$t9": 0,
-    }
-
-    saparateline = '{:-^82}'.format('')
+    ''' Read the File; Create Expressions with statement and Offset '''
     lineCount = 0
     with open(sys.argv[2], 'r') as file:
         line = file.readline()
@@ -271,20 +285,27 @@ def main():
             line = file.readline()
             lineCount = lineCount + 1
 
+    ''' Print The Simulation '''
     print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
 
+    # TODO: I believe were supposed to stop after 48 cycles so we might have to change this to correct number of cycles
+    # Loop through MIPS Simulator until all instructions have WB.
     while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
         print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
         for i in range(len(MIPSExpressions)):
+            # Check the last expression to see if its completed the IF stage before the second node can execute
             if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
                 MIPSExpressions[i].canExecute = True
-            print(MIPSExpressions[i], end='')
+            # Print the Expression
+            print(MIPSExpressions[i])
+            # If the Expression can execute increment cycle so next step can execute
             if MIPSExpressions[i].canExecute:
                 MIPSExpressions[i].currentCycle += 1
 
-        print(end='\n')
+        print(end='\n') # Print Newline
 
+        # Print Dictionary; set newline every 4 registers
         i = 0
         for key, value in registers.items():
             if i % 4 == 0 and i != 0:
@@ -295,6 +316,13 @@ def main():
         print(end='\n')
         print(saparateline)
     print('END OF SIMULATION')
+
+
+
+
+
+
+
 
 '''
 
