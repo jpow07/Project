@@ -71,9 +71,20 @@ class Expression:
             if self.operand == 'add':
                 reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
             elif self.operand == 'addi':
-                reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
+                reg[self.register[0]] = reg[self.register[1]] + self.register[2]
             elif self.operand == 'sub':
                 reg[self.register[0]] = reg[self.register[1]] - reg[self.register[2]]
+            elif self.operand == 'subi':
+                reg[self.register[0]] = reg[self.register[1]] - self.register[2]
+            elif self.operand == 'and':
+                reg[self.register[0]] = reg[self.register[1]] & reg[self.register[2]]
+            elif self.operand == 'andi':
+                reg[self.register[0]] = reg[self.register[1]] & self.register[2]
+            elif self.operand == 'or':
+                reg[self.register[0]] = reg[self.register[1]] | reg[self.register[2]]
+            elif self.operand == 'ori':
+                reg[self.register[0]] = reg[self.register[1]] | self.register[2]
+
 
         else:
             # J Format [ OP Label ]
