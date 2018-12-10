@@ -44,11 +44,13 @@ class Expression:
         # Print previous to current cycle
         for i in range(self.currentCycle):
             string += '\t' + self.stages[i]
-        # Print asterick if waiting
+        # Print asterick if waiting and decrease spacing for trailing decimal point
         if self.isWaiting:
+            print("{0:20}".format('nop') + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.')
             for i in range(self.isWaiting):
                 string += '\t*'
                 self.isWaiting += 1
+                spacing -= self.isWaiting
         # Print Trailing decimal points
         for i in range(spacing):
             string += '\t.'
@@ -58,9 +60,9 @@ class Expression:
 
 # This is a function to take in the operation, the unseperated registers and the array to registers
 # and then return the desired calculation
-def calculation(opp, order, reg):
-    # Seperate the input based on comma's
-    c = order.split(",")
+def calculation(expression, reg):
+    opp = expression.operand
+
     # Check if the 'add' operation
     if opp == "add":
         s1 = 0
@@ -289,14 +291,16 @@ def main():
     print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
 
-    # TODO: I believe were supposed to stop after 48 cycles so we might have to change this to correct number of cycles
-    # Loop through MIPS Simulator until all instructions have WB.
+    # TODO: I believe were supposed to stop after 48 cycles or something so we might have to change this to correct
+    #  number of cycles Loop through MIPS Simulator until all instructions have complete WB stage.
     while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
         print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
         for i in range(len(MIPSExpressions)):
             # Check the last expression to see if its completed the IF stage before the second node can execute
             if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
                 MIPSExpressions[i].canExecute = True
+            if MIPSExpressions[i].currentCycle == 5:
+                calculation(MIPSExpressions[i], registers)
             # Print the Expression
             print(MIPSExpressions[i])
             # If the Expression can execute increment cycle so next step can execute
