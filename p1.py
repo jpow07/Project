@@ -15,7 +15,7 @@ class Expression:
         temp = statement.split(' ')
         self.operand = temp[0]
         self.register = temp[1].split(',')
-        if len(self.register) == 2:
+        if len(self.register) == 3:
             self.format = 'R'
         else:
             self.format = 'L'
@@ -68,6 +68,7 @@ class Expression:
         return string
 
     def calculateExpression(self, reg):
+
         if self.format == 'L':
             # L Format [ Operation rt, IMM(rs) ]
             return
@@ -77,19 +78,19 @@ class Expression:
             if self.operand == 'add':
                 reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
             elif self.operand == 'addi':
-                reg[self.register[0]] = reg[self.register[1]] + self.register[2]
+                reg[self.register[0]] = reg[self.register[1]] + int(self.register[2])
             elif self.operand == 'sub':
                 reg[self.register[0]] = reg[self.register[1]] - reg[self.register[2]]
             elif self.operand == 'subi':
-                reg[self.register[0]] = reg[self.register[1]] - self.register[2]
+                reg[self.register[0]] = reg[self.register[1]] - int(self.register[2])
             elif self.operand == 'and':
                 reg[self.register[0]] = reg[self.register[1]] & reg[self.register[2]]
             elif self.operand == 'andi':
-                reg[self.register[0]] = reg[self.register[1]] & self.register[2]
+                reg[self.register[0]] = reg[self.register[1]] & int(self.register[2])
             elif self.operand == 'or':
                 reg[self.register[0]] = reg[self.register[1]] | reg[self.register[2]]
             elif self.operand == 'ori':
-                reg[self.register[0]] = reg[self.register[1]] | self.register[2]
+                reg[self.register[0]] = reg[self.register[1]] | int(self.register[2])
 
 
         else:
@@ -299,6 +300,7 @@ def main():
     MIPSExpressions = []  # Hold the MIPS Expressions
     saparateline = '{:-^82}'.format('')  # Print a dashed Line
     registers = {  # Hold the registers as a dictionary
+        "$zero": 0,
         # S Registers
         "$s0": 0, "$s1": 0, "$s2": 0, "$s3": 0,
         "$s4": 0, "$s5": 0, "$s6": 0, "$s7": 0,
@@ -342,7 +344,7 @@ def main():
                 MIPSExpressions[i].canExecute = True
 
             # Calculate Registers on WB Cycle
-            if MIPSExpressions[i].currentCycle == 5:
+            if MIPSExpressions[i].currentCycle == 4:
                 MIPSExpressions[i].calculateExpression(registers)
 
             # Print the Expression
@@ -356,6 +358,8 @@ def main():
         # Print Dictionary; set newline every 4 registers
         i = 0
         for key, value in registers.items():
+            if(key == '$zero' or key == '$at'):
+                continue
             if i % 4 == 0 and i != 0:
                 print(end='\n')
             print("{0:20}".format(key + ' = ' + str(value)), end='')
