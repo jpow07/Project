@@ -6,37 +6,43 @@ The purpose of this code is to read in a mips file and to output up to the first
 """
 import sys
 
+
 class Expression:
-    def __init__(self, statement):
+    stages = ["IF", "ID", "EX", "MEM", "WB"]
+
+    def __init__(self, statement, offset):
         self.statement = statement
         temp = statement.split(' ')
         self.operand = temp[0]
         self.registers = temp[1].split(',')
         self.currentCycle = 0
         self.isWaiting = 0
-
+        self.offset = offset
 
     def __str__(self):
-        return self.statement
-        string = self.operand + " "
-        for i in range(0,2):
-            if i < len(self.registers) - 1:
-                string +=  self.registers[i] + ","
+        spacing = 16 - self.offset - self.currentCycle
+        string = self.statement
 
-        return string
+        if self.offset > 0:
+            for i in range(self.offset):
+                string += '\t.'
+        for i in range(self.currentCycle):
+            string += '\t' + self.stages[i]
+        for i in range(spacing):
+            string += '\t.'
+        return string + '\n'
 
 
-
-#This is a function to take in the operation, the unseperated registers and the array to registers
-#and then return the desired calculation
+# This is a function to take in the operation, the unseperated registers and the array to registers
+# and then return the desired calculation
 def calculation(opp, order, reg):
-    #Seperate the input based on comma's
+    # Seperate the input based on comma's
     c = order.split(",")
-    #Check if the 'add' operation
+    # Check if the 'add' operation
     if opp == "add":
         s1 = 0
         s2 = 0
-        #Find the correct registers and add the values
+        # Find the correct registers and add the values
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
@@ -44,20 +50,20 @@ def calculation(opp, order, reg):
                 s2 = reg[i][1]
         answer = s1 + s2
         return answer
-    #Check if the 'addi' operation
+    # Check if the 'addi' operation
     elif opp == "addi":
         s1 = 0
-        #Find the one register and add the constant
+        # Find the one register and add the constant
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
         answer = s1 + int(c[2])
         return answer
-    #Check if the 'and' operation
+    # Check if the 'and' operation
     elif opp == "and":
         s1 = 0
         s2 = 0
-        #Find the two registers and logical 'and' them
+        # Find the two registers and logical 'and' them
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
@@ -65,20 +71,20 @@ def calculation(opp, order, reg):
                 s2 = reg[i][1]
         answer = s1 & s2
         return answer
-    #Check if the 'andi' operation
+    # Check if the 'andi' operation
     elif opp == "andi":
         s1 = 0
-        #Find the one register and then logical 'and' with constant
+        # Find the one register and then logical 'and' with constant
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
         answer = s1 & int(c[2])
         return answer
-    #Check if the 'or' operation
+    # Check if the 'or' operation
     elif opp == "or":
         s1 = 0
         s2 = 0
-        #Find the two registers and logical 'or' them
+        # Find the two registers and logical 'or' them
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
@@ -86,92 +92,93 @@ def calculation(opp, order, reg):
                 s2 = reg[i][1]
         answer = s1 | s2
         return answer
-    #Check if the 'ori' function
+    # Check if the 'ori' function
     elif opp == "ori":
         s1 = 0
-        #Find the one register and logical 'or' with the constant
+        # Find the one register and logical 'or' with the constant
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
         answer = s1 | int(c[2])
         return answer
-    #Check if 'slt' operation
+    # Check if 'slt' operation
     elif opp == "slt":
         s1 = 0
         s2 = 0
-        #Find the two registers and then check if s1 is less than s2
+        # Find the two registers and then check if s1 is less than s2
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
             elif reg[i][0] == c[2]:
                 s2 = reg[i][1]
-        #Return either 0 or 1 based on result
+        # Return either 0 or 1 based on result
         if s1 < s2:
             answer = 0
         else:
             answer = 1
         return answer
-    #Check if 'slti' operation
+    # Check if 'slti' operation
     elif opp == "slti":
         s1 = 0
-        #Find the one register and then check if less than constant
+        # Find the one register and then check if less than constant
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
-        #Return either 0 or 1 based on result
+        # Return either 0 or 1 based on result
         if s1 < int(c[2]):
             answer = 0
         else:
             answer = 1
         return answer
-    #Check if operation is 'beq'
+    # Check if operation is 'beq'
     elif opp == "beq":
         s1 = 0
         s2 = 0
-        #Find the two registers
+        # Find the two registers
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
             elif reg[i][0] == c[2]:
                 s2 = reg[i][1]
-        #Return either Yj, yes jump, or Nj, no jump, based on equaltiy
+        # Return either Yj, yes jump, or Nj, no jump, based on equaltiy
         if s1 == s2:
             answer = "Yj"
         else:
             answer = "Nj"
         return answer
-    #Check if operation is 'bne'
+    # Check if operation is 'bne'
     elif opp == "bne":
         s1 = 0
         s2 = 0
-        #Find the two registers
+        # Find the two registers
         for i in range(0, len(reg)):
             if reg[i][0] == c[1]:
                 s1 = reg[i][1]
             elif reg[i][0] == c[2]:
                 s2 = reg[i][1]
-        #Check if they are not equal and return Yj, yes jump, or Nj, no jump
+        # Check if they are not equal and return Yj, yes jump, or Nj, no jump
         if s1 != s2:
             answer = "Yj"
         else:
             answer = "Nj"
         return answer
-    #Else the operation is not found
+    # Else the operation is not found
     return "opp not found"
 
-#A function to determine if a nop is needed at any given line, i
-#It takes in: i, as well as the array of lines
+
+# A function to determine if a nop is needed at any given line, i
+# It takes in: i, as well as the array of lines
 def add_nop(i, sblock):
     nop_exist = False
     nop_num = 0
     output = [nop_exist, sblock, nop_num]
-    #Check if the first line
+    # Check if the first line
     if i == 1:
-        #Check if the previous values of nops
+        # Check if the previous values of nops
         if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop":
             l1 = sblock[i][0].split(' ')[1].split(',')
             l2 = sblock[i - 1][0].split(' ')[1].split(',')
-            #Run through all the elements and determine what to print
+            # Run through all the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
                     if "MEM" in sblock[i - 1]:
@@ -185,14 +192,14 @@ def add_nop(i, sblock):
                         sblock.insert(i, sline)
                         sblock.insert(i, sline)
                         output[1] = sblock
-    #Else if any other line
+    # Else if any other line
     elif i > 1:
-        #Check if previous are nops
+        # Check if previous are nops
         if sblock[i][0] != "nop" and sblock[i - 1][0] != "nop" and sblock[i - 2][0] != "nop":
             l1 = sblock[i][0].split(' ')[1].split(',')
             l2 = sblock[i - 1][0].split(' ')[1].split(',')
             l3 = sblock[i - 2][0].split(' ')[1].split(',')
-            #RUn through the elements and determine what to print
+            # RUn through the elements and determine what to print
             for elements in range(1, len(l1)):
                 if l1[elements] == l2[0]:
                     if "MEM" in sblock[i - 1]:
@@ -220,18 +227,22 @@ def add_nop(i, sblock):
     return output
 
 
-#A main function to be the driver for our code
+# A main function to be the driver for our code
 def main():
     list1 = []
 
     # TODO: Delete this after testing
     # TEST TEST TEST  TEST #
     print("TEST TEST TEST")
-    x = Expression("add $s0,$t1,$s5")
+    x = Expression("add $s0,$t1,$s5", 0)
     print(x)
     print("TEST TEST TEST\n\n")
 
     # TEST TEST ^^^^ TEST TEST #
+
+    if len(sys.argv) != 3:
+        print("error")
+        exit(1)
 
     # Check Arg[1] for forwarding option
     if sys.argv[1].upper() == 'N':
@@ -239,17 +250,47 @@ def main():
     else:
         optionForwarding = " (forwarding)"
 
+    registers = {
+        # S Registers
+        "$s0": 0,
+        "$s1": 0,
+        "$s2": 0,
+        "$s3": 0,
+        "$s4": 0,
+        "$s5": 0,
+        "$s6": 0,
+        "$s7": 0,
+
+        # T Registers
+        "$t0": 0,
+        "$t1": 0,
+        "$t2": 0,
+        "$t3": 0,
+        "$t4": 0,
+        "$t5": 0,
+        "$t6": 0,
+        "$t7": 0,
+        "$t8": 0,
+        "$t9": 0,
+    }
 
     register = [['$s0', 0], ['$s1', 0], ['$s2', 0], ['$s3', 0], ['$s4', 0], ['$s5', 0], ['$s6', 0], ['$s7', 0],
                 ['$t0', 0], ['$t1', 0], ['$t2', 0], ['$t3', 0], ['$t4', 0], ['$t5', 0], ['$t6', 0], ['$t7', 0],
                 ['$t8', 0], ['$t9', 0]]
-    saparateline = '----------------------------------------------------------------------------------'
-
+    saparateline = '{:-^82}'.format('')
+    lineCount = 0
     with open(sys.argv[2], 'r') as file:
         line = file.readline()
         while line:
-            list1.append(Expression(line))
+            list1.append(Expression(line.rstrip('\n'), lineCount))
             line = file.readline()
+            lineCount = lineCount + 1
+
+
+
+    print('START OF SIMULATION' + optionForwarding)
+    print(saparateline)
+    print("CPU Cycles ===>\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
 
     for i in range(len(list1)):
         print(list1[i], end='')
@@ -426,4 +467,3 @@ def main():
 '''
 if __name__ == "__main__":
     main()
-
