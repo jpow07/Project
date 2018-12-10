@@ -281,20 +281,25 @@ def main():
 
     print('START OF SIMULATION' + optionForwarding)
     print(saparateline)
-    print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
 
-    for i in range(len(MIPSExpressions)):
-        print(MIPSExpressions[i], end='')
-    print(end='\n')
 
-    i = 0
-    for key, value in registers.items():
-        if i % 4 == 0 and i != 0:
-            print('\n')
-        print(key + ' = ' + str(value), end = '\t\t')
+    while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
+        print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
+        for i in range(len(MIPSExpressions)):
+            print(MIPSExpressions[i], end='')
+            MIPSExpressions[i].currentCycle += 1
 
-        i += 1
+        print(end='\n')
 
+        i = 0
+        for key, value in registers.items():
+            if i % 4 == 0 and i != 0:
+                print(end='\n')
+            print(key + ' = ' + str(value), end = '\t\t')
+
+            i += 1
+        print(end='\n')
+        print(saparateline)
 '''
     sblock = []
     print('START OF SIMULATION' + optionForwarding)
