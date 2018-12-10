@@ -91,8 +91,7 @@ class Expression:
                 reg[self.register[0]] = reg[self.register[1]] | reg[self.register[2]]
             elif self.operand == 'ori':
                 reg[self.register[0]] = reg[self.register[1]] | int(self.register[2])
-
-
+                
         else:
             # J Format [ OP Label ]
             return
