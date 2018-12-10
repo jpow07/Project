@@ -15,12 +15,23 @@ class Expression:
         temp = statement.split(' ')
         self.operand = temp[0]
         self.registers = temp[1].split(',')
-        self.currentCycle = 0
+        self.currentCycle = 1
         self.isWaiting = 0
         self.offset = offset
+        if self.offset > 0:
+            self.canExecute = False
+        else:
+            self.canExecute = True
 
     def __str__(self):
+        if self.currentCycle > 5:
+            self.currentCycle = 5
+            
         spacing = 16 - self.offset - self.currentCycle
+
+        if not self.canExecute:
+            return "{0:20}".format(self.statement) + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\n'
+
         string = self.statement + '\t'
 
         if self.offset > 0:
@@ -266,8 +277,11 @@ def main():
     while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
         print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
         for i in range(len(MIPSExpressions)):
+            if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
+                MIPSExpressions[i].canExecute = True
             print(MIPSExpressions[i], end='')
-            MIPSExpressions[i].currentCycle += 1
+            if MIPSExpressions[i].canExecute:
+                MIPSExpressions[i].currentCycle += 1
 
         print(end='\n')
 
@@ -280,7 +294,7 @@ def main():
             i += 1
         print(end='\n')
         print(saparateline)
-
+    print('END OF SIMULATION')
 
 '''
 
