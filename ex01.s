@@ -1,3 +1,3 @@
-lw $t2,20($a0)
-and $t4,$t2,$t5
-or $t8,$t2,$t6
+ori $s1,$zero,451
+addi $t2,$s0,73
+add $t4,$s3,$s7
