@@ -6,19 +6,23 @@ The purpose of this code is to read in a mips file and to output up to the first
 """
 import sys
 
-
+#A class to hold all of the characteristics of an input and its state
 class Expression:
     stages = ["IF", "ID", "EX", "MEM", "WB"]
 
+    #Initialize the class by taking in an unseparated input statement and offset
     def __init__(self, statement, offset):
+        #Store the statement, then split at the space and store the opperand
         self.statement = statement
         temp = statement.split(' ')
         self.operand = temp[0]
+        #Split the registers and check if a load operation or not
         self.register = temp[1].split(',')
         if len(self.register) == 3:
             self.format = 'R'
         else:
             self.format = 'L'
+        #Set the default values
         self.currentCycle = 1
         self.isWaiting = 0
         self.offset = offset
@@ -42,25 +46,33 @@ class Expression:
 
         # Print blank Line if Cannot execute
         if not self.canExecute:
-            return "{0:20}".format(self.statement) + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.'
+            return "{0:20}".format(self.statement) + '.   .   .   .   .   .   .   .   .   .   .   .   .   .   .   . '
 
         # Print offset decimal
         if self.offset > 0:
             for i in range(self.offset):
-                string += '.\t'
+                string += '.   '
         # Print previous to current cycle
         for i in range(self.currentCycle):
-            string += self.stages[i] + '\t'
+            #Determine spaceing if 2 or 3 char
+            if self.stages[i] == "MEM":
+                string += self.stages[i] + ' '
+            else:
+                string += self.stages[i] + '  '
         # Print asterisk if waiting
 
         if self.isWaiting:
-            print("{0:20}".format('nop') + '.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.\t.')
+            print("{0:20}".format('nop') + '.   .   .   .   .   .   .   .   .   .   .   .   .   .   .   . ')
             for i in range(self.isWaiting):
-                string += '*\t'
+                string += '*   '
 
         # Print Trailing decimal points
         for i in range(spacing):
-            string += '.\t'
+            #Check if last entry
+            if i == (spacing - 1):
+                string += '. '
+            else:
+                string += '.   '
         # Return the string with proper spacing (20 spaces)
         return string
 
@@ -153,7 +165,7 @@ def main():
 
     # Check Command line Arguments
     if len(sys.argv) != 3:
-        print("error")
+        print("Invalid number of inputs, needs 2!\n")
         exit(1)
 
     # Check argv[1] for forwarding option
@@ -179,7 +191,7 @@ def main():
     # TODO: I believe were supposed to stop after 48 cycles or something so we might have to change this to correct
     #  number of cycles Loop through MIPS Simulator until all instructions have complete WB stage.
     while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
-        print("CPU Cycles ===>\t\t1\t2\t3\t4\t5\t6\t7\t8\t9\t10\t11\t12\t13\t14\t15\t16")
+        print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
         for i in range(len(MIPSExpressions)):
             # Check the last expression to see if its completed the IF stage before the second node can execute
             if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
