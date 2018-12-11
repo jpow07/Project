@@ -170,6 +170,7 @@ def main():
             MIPSExpressions.append(Expression(line.rstrip('\n'), lineCount))
             line = file.readline()
             lineCount = lineCount + 1
+    file.close()
 
     # Print The Simulation
     print('START OF SIMULATION' + optionForwarding)
