@@ -24,55 +24,52 @@ class Expression:
             self.format = 'L'
         #Set the default values
         self.currentCycle = 1
-        self.isWaiting = 0
+        self.isWaiting = False
+        self.waitCount = 0
         self.offset = offset
         if self.offset > 0:
             self.canExecute = False
         else:
             self.canExecute = True
+        self.nopString = ''
 
     def __str__(self):
+        if self.isWaiting:
+            string = self.nopString
+        else:
+            string = ''
         # Keep currentCycle in Bounds
         if self.currentCycle > 5:
             self.currentCycle = 5
 
         # Calculate Spacing for trailing decimal point
         if self.isWaiting:
-            spacing = 16 - self.offset - self.currentCycle - self.isWaiting
-            string = "{0:20}".format('nop')
+            spacing = 16 - self.offset - self.currentCycle - self.waitCount
+            string += "{:20}".format('nop')
         else:
             spacing = 16 - self.offset - self.currentCycle
-            string = "{0:20}".format(self.statement)
-
-        # Print blank Line if Cannot execute
-        if not self.canExecute:
-            return "{0:20}".format(self.statement) + '.   .   .   .   .   .   .   .   .   .   .   .   .   .   .   . '
+            string += "{:20}".format(self.statement)
 
         # Print offset decimal
         if self.offset > 0:
             for i in range(self.offset):
-                string += '.   '
+                string += '{:4}'.format('.')
         # Print previous to current cycle
         for i in range(self.currentCycle):
-            #Determine spaceing if 2 or 3 char
-            if self.stages[i] == "MEM":
-                string += self.stages[i] + ' '
-            else:
-                string += self.stages[i] + '  '
+            string += '{0:4}'.format(self.stages[i])
         # Print asterisk if waiting
 
         if self.isWaiting:
-            print("{0:20}".format('nop') + '.   .   .   .   .   .   .   .   .   .   .   .   .   .   .   . ')
-            for i in range(self.isWaiting):
-                string += '*   '
+            for i in range(self.waitCount):
+                string += '{0:4}'.format('*')
 
         # Print Trailing decimal points
-        for i in range(spacing):
-            #Check if last entry
-            if i == (spacing - 1):
-                string += '. '
-            else:
-                string += '.   '
+        for i in range(spacing - 1):
+            string += '{0:4}'.format('.')
+        string += '.'
+        if self.isWaiting:
+            self.nopString = string
+
         # Return the string with proper spacing (20 spaces)
         return string
 
@@ -151,7 +148,7 @@ def add_nop(i, MIPSExpressions):
 def main():
     # Variables
     MIPSExpressions = []  # Hold the MIPS Expressions
-    saparateline = '{:-^82}'.format('')  # Print a dashed Line
+    separateline = '{:-^82}'.format('')  # Print a dashed Line
     registers = {  # Hold the registers as a dictionary
         "$zero": 0, "$ra": 0,
         # S Registers
@@ -185,13 +182,18 @@ def main():
     file.close()
 
     # Print The Simulation
-    print('START OF SIMULATION' + optionForwarding)
-    print(saparateline)
+    print('START OF SIMULATION' + optionForwarding, end='\n')
+    print(separateline, end='\n')
+    cycles = '{:<20}'.format('CPU Cycles ===>')
+    for i in range(1,16):
+        cycles += '{:<4}'.format(i)
+    cycles += '{:<0}'.format('16')
 
     # TODO: I believe were supposed to stop after 48 cycles or something so we might have to change this to correct
     #  number of cycles Loop through MIPS Simulator until all instructions have complete WB stage.
     while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
-        print("CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16")
+
+        print(cycles)
         for i in range(len(MIPSExpressions)):
             # Check the last expression to see if its completed the IF stage before the second node can execute
             if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
@@ -204,7 +206,7 @@ def main():
             # If the Expression can execute increment cycle so next step can execute
             if MIPSExpressions[i].canExecute:
                 # Print the Expression
-                print(MIPSExpressions[i])
+                print(MIPSExpressions[i], end='\n')
                 MIPSExpressions[i].currentCycle += 1
 
         print(end='\n')  # Print Newline
@@ -212,16 +214,17 @@ def main():
         # Print Dictionary; set newline every 4 registers
         i = 0
         for key, value in registers.items():
-            if (key == '$zero' or key == '$ra'):
+            if key == '$zero' or key == '$ra':
                 continue
-            if i % 4 == 0 and i != 0:
-                print(end='\n')
-            print("{0:20}".format(key + ' = ' + str(value)), end='')
+            if i == 3 or i == 7 or i == 11 or i == 15 or i == 17:
+                print("{0:<7}".format(key + ' = ' + str(value)), end='\n')
+            else:
+                print("{0:<20}".format(key + ' = ' + str(value)), end='')
 
             i += 1
-        print(end='\n')
-        print(saparateline)
-    print('END OF SIMULATION')
+        # print(end='\n')
+        print(separateline, end='\n')
+    print('END OF SIMULATION', end='\n')
 
 
 '''
