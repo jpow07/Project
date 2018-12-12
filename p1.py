@@ -37,6 +37,7 @@ class Expression:
         self.isWaiting = False
         self.waitCount = 0
         self.offset = offset
+        self.controlHazard = 0
         if self.offset > 0:
             self.canExecute = False
         else:
@@ -67,7 +68,12 @@ class Expression:
             #            if self.waitCount > 0 and i == 1:
             #                string += '{0:4}'.format(self.stages[1])
             #                spacing -= 1
-            string += '{0:4}'.format(self.stages[i])
+            #if self.controlHazard > i and self.controlHazard > 0:
+             #   string += '{0:4}'.format(self.stages[i])
+            if (self.controlHazard - i) <= 0 and self.controlHazard > 0:
+                string += '{0:4}'.format('*')
+            else:
+                string += '{0:4}'.format(self.stages[i])
 
         # Print Trailing decimal points
         for i in range(spacing - 1):
@@ -294,6 +300,10 @@ def main():
                             line = file.readline()
                             lineCount = lineCount + 1
                         file.close()
+                        #Increment control hazard of any used values
+                        MIPSExpressions[i+1].controlHazard = 3
+                        MIPSExpressions[i+2].controlHazard = 2
+                        MIPSExpressions[i+3].controlHazard = 1
                 else:
                     MIPSExpressions[i].calculateExpression(registers)
 
