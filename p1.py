@@ -275,7 +275,7 @@ def main():
                 MIPSExpressions[i].canExecute = True
 
             # Calculate Registers on WB Cycle
-            if MIPSExpressions[i].currentCycle == 5:
+            if MIPSExpressions[i].currentCycle == 5 and MIPSExpressions[i].controlHazard == 0:
                 #Check if a jump operation
                 if MIPSExpressions[i].operand == "beq" or MIPSExpressions[i].operand == "bne":
                     #Check if jump
