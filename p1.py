@@ -73,6 +73,9 @@ class Expression:
         for i in range(spacing - 1):
             string += '{0:4}'.format('.')
         string += '.'
+        
+        #Truncate if beyond bounds #NEEDS MORE WORK
+        string = string[:81]
 
         return string
 
@@ -103,7 +106,7 @@ class Expression:
             string += '{0:4}'.format('.')
         string += '.'
 
-        # Return the string with proper spacing (20 spaces)
+        # Return the string with proper spacing (20 spaces)        
         print(string)
 
     def calculateExpression(self, reg):
@@ -248,7 +251,8 @@ def main():
 
     # TODO: I believe were supposed to stop after 48 cycles or something so we might have to change this to correct
     #  number of cycles Loop through MIPS Simulator until all instructions have complete WB stage.
-    while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6:
+    j = 0
+    while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6 and j < 21:
 
         print(cycles)
         for i in range(len(MIPSExpressions)):
@@ -270,13 +274,27 @@ def main():
                     if temp >= 0:
                         #NEED TO GO TO THIS LINE NEXT (whatever value is stored in temp + 1, as temp points to the jump label)
                         #Needs to tell next 3 registers to print '*' and to immediately start printing what is stored in line after temp
-                        i = i   #Placeholder for now, as have to also change the values stored in the previously used MIPSExpressions
+                        #TENTATIVE: REPLACE ALL REGISTERS AFTER THE CONTROL ERRORED WITH INPUT FROM THE temp+1 value
+                        while len(MIPSExpressions) > (i + 4):
+                            MIPSExpressions.pop()
+                        #Replace any remaining inputs with new ones fresh from the jump line
+                        file = open(sys.argv[2], 'r')
+                        lineCount = 0
+                        line = file.readline()
+                        while line:
+                            if lineCount > (temp - 1):
+                                MIPSExpressions.append(Expression(line.rstrip('\n'), (lineCount + i + 2)))
+                                #Decrement if a jump label line to format output
+                                if ':' in line:
+                                    lineCount = lineCount - 1
+                            line = file.readline()
+                            lineCount = lineCount + 1
+                        file.close()
                 else:
                     MIPSExpressions[i].calculateExpression(registers)
 
             # If the Expression can execute increment cycle so next step can execute
             if MIPSExpressions[i].canExecute:
-
                 # Print the Expression
                 print(MIPSExpressions[i], end='\n')
                 #Only print nop's when there is no forwarding
@@ -302,6 +320,7 @@ def main():
                 print("{0:<20}".format(key + ' = ' + str(value)), end='')
 
             i += 1
+        j += 1
         print(separateline, end='\n')
     print('END OF SIMULATION', end='\n')
 
