@@ -42,6 +42,9 @@ class Expression:
         else:
             self.canExecute = True
         self.nopString = ''
+        #Set a line for the jump label to be on
+        if self.operand == 'beq' or self.operand == 'bne':
+            self.jumpLabel = 0
 
     def __str__(self):
         # Keep currentCycle in Bounds
@@ -127,22 +130,31 @@ class Expression:
                 reg[self.register[0]] = reg[self.register[1]] | reg[self.register[2]]
             elif self.operand == 'ori':
                 reg[self.register[0]] = reg[self.register[1]] | int(self.register[2])
+            #Check if slt or slti
+            elif self.operand == 'slt':
+                if reg[self.register[1]] < reg[self.register[2]]:
+                    reg[self.register[0]] = 1
+                else:
+                    reg[self.register[0]] = 0
+            elif self.operand == 'slti':
+                if reg[self.register[1]] < int(self.register[2]):
+                    reg[self.register[0]] = 1
+                else:
+                    reg[self.register[0]] = 0                
             #Check if jumping to a loop (stored in register[2])
             elif self.operand == 'beq':
                 #Only run if the equals is true
                 if reg[self.register[0]] == reg[self.register[1]]:
                     #Tell the variable to move back to where the loop label is located
-                    for i in len(MIPSExpressions):
-                        if MIPSExpressions[i - 1].register[0] == self.register[2]:
-                            return i - 1
+                    return self.jumpLabel
+                return (-1)
                 
             elif self.operand == 'bne':
                 #Only run if the not equals is true
                 if reg[self.register[0]] != reg[self.register[1]]:
                     #Tell the variable to move back to where the loop label is located
-                    for i in len(MIPSExpressions):
-                        if MIPSExpressions[i - 1].register[0] == self.register[2]:
-                            return i - 1
+                    return self.jumpLabel
+                return (-1)
         else:
             # J Format [ OP Label ]
             return
@@ -213,6 +225,16 @@ def main():
             lineCount = lineCount + 1
     file.close()
 
+    #Set up the jump labels to point to the correct points in the code
+    i = 0
+    j = 0
+    while i < (len(MIPSExpressions) - 1):
+        if MIPSExpressions[i].operand == 'bne' or MIPSExpressions[i].operand == 'beq':
+            while j < (len(MIPSExpressions) - 1):
+                if MIPSExpressions[j].register[0] == MIPSExpressions[i].register[2]:
+                    MIPSExpressions[i].jumpLabel = j
+                j += 1
+        i += 1
     # Print The Simulation
     print('START OF SIMULATION' + optionForwarding, end='\n')
     print(separateline, end='\n')
@@ -237,7 +259,17 @@ def main():
 
             # Calculate Registers on WB Cycle
             if MIPSExpressions[i].currentCycle == 5:
-                MIPSExpressions[i].calculateExpression(registers)
+                #Check if a jump operation
+                if MIPSExpressions[i].operand == "beq" or MIPSExpressions[i].operand == "bne":
+                    #Check if jump
+                    temp = MIPSExpressions[i].calculateExpression(registers)
+                    #Check if a valie line value recieved (gets -1 if not true)
+                    if temp >= 0:
+                        #NEED TO GO TO THIS LINE NEXT (whatever value is stored in temp + 1, as temp points to the jump label)
+                        #Needs to tell next 3 registers to print '*' and to immediately start printing what is stored in line after temp
+                        i = i   #Placeholder for now, as have to also change the values stored in the previously used MIPSExpressions
+                else:
+                    MIPSExpressions[i].calculateExpression(registers)
 
             # If the Expression can execute increment cycle so next step can execute
             if MIPSExpressions[i].canExecute:
