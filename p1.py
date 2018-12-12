@@ -15,14 +15,23 @@ class Expression:
     def __init__(self, statement, offset):
         # Store the statement, then split at the space and store the opperand
         self.statement = statement
-        temp = statement.split(' ')
-        self.operand = temp[0]
-        # Split the registers and check if a load operation or not
-        self.register = temp[1].split(',')
-        if len(self.register) == 3:
-            self.format = 'R'
+        #Check if a loop statement
+        if ':' in statement:
+            #Store operand as jump and label in register[0]
+            self.operand = "jump"
+            self.format = 'J'
+            self.register = []
+            self.register.append(statement.split(':')[0])
+        #Otherwise is a command line
         else:
-            self.format = 'L'
+            temp = statement.split(' ')
+            self.operand = temp[0]
+            # Split the registers and check if a load operation or not
+            self.register = temp[1].split(',')
+            if len(self.register) == 3:
+                self.format = 'R'
+            else:
+                self.format = 'L'
         # Set the default values
         self.currentCycle = 1
         self.isWaiting = False
@@ -105,7 +114,6 @@ class Expression:
             if self.operand == 'add':
                 reg[self.register[0]] = reg[self.register[1]] + reg[self.register[2]]
             elif self.operand == 'addi':
-
                 reg[self.register[0]] = reg[self.register[1]] + int(self.register[2])
             elif self.operand == 'sub':
                 reg[self.register[0]] = reg[self.register[1]] - reg[self.register[2]]
@@ -119,8 +127,22 @@ class Expression:
                 reg[self.register[0]] = reg[self.register[1]] | reg[self.register[2]]
             elif self.operand == 'ori':
                 reg[self.register[0]] = reg[self.register[1]] | int(self.register[2])
-
-
+            #Check if jumping to a loop (stored in register[2])
+            elif self.operand == 'beq':
+                #Only run if the equals is true
+                if reg[self.register[0]] == reg[self.register[1]]:
+                    #Tell the variable to move back to where the loop label is located
+                    for i in len(MIPSExpressions):
+                        if MIPSExpressions[i - 1].register[0] == self.register[2]:
+                            return i - 1
+                
+            elif self.operand == 'bne':
+                #Only run if the not equals is true
+                if reg[self.register[0]] != reg[self.register[1]]:
+                    #Tell the variable to move back to where the loop label is located
+                    for i in len(MIPSExpressions):
+                        if MIPSExpressions[i - 1].register[0] == self.register[2]:
+                            return i - 1
         else:
             # J Format [ OP Label ]
             return
@@ -184,6 +206,9 @@ def main():
         line = file.readline()
         while line:
             MIPSExpressions.append(Expression(line.rstrip('\n'), lineCount))
+            #Decrement if a jump label line to format output
+            if ':' in line:
+                lineCount = lineCount - 1
             line = file.readline()
             lineCount = lineCount + 1
     file.close()
@@ -202,6 +227,10 @@ def main():
 
         print(cycles)
         for i in range(len(MIPSExpressions)):
+            #Skip over any jump labels
+            if MIPSExpressions[i].operand == "jump":
+                MIPSExpressions[i].currentCycle = 3
+                continue
             # Check the last expression to see if its completed the IF stage before the second node can execute
             if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
                 MIPSExpressions[i].canExecute = True
