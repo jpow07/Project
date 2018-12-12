@@ -33,8 +33,9 @@ $t8 = 0             $t9 = 0
 CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16
 ori $s1,$zero,451   IF  ID  EX  MEM .   .   .   .   .   .   .   .   .   .   .   .
 addi $t2,$s0,73     .   IF  ID  EX  .   .   .   .   .   .   .   .   .   .   .   .
-nop                 .   .   IF  ID  *   .   .   .   .   .   .   .   .   .   .   .
 add $t4,$s1,$s7     .   .   IF  ID  .   .   .   .   .   .   .   .   .   .   .   .
+rs: $s1
+reg: $s1
 
 $s0 = 0             $s1 = 0             $s2 = 0             $s3 = 0
 $s4 = 0             $s5 = 0             $s6 = 0             $s7 = 0
@@ -47,6 +48,8 @@ ori $s1,$zero,451   IF  ID  EX  MEM WB  .   .   .   .   .   .   .   .   .   .   
 addi $t2,$s0,73     .   IF  ID  EX  MEM .   .   .   .   .   .   .   .   .   .   .
 nop                 .   .   IF  ID  *   .   .   .   .   .   .   .   .   .   .   .
 add $t4,$s1,$s7     .   .   IF  ID  .   .   .   .   .   .   .   .   .   .   .   .
+rs: $s1
+reg: $s1
 
 $s0 = 0             $s1 = 451           $s2 = 0             $s3 = 0
 $s4 = 0             $s5 = 0             $s6 = 0             $s7 = 0
@@ -57,8 +60,10 @@ $t8 = 0             $t9 = 0
 CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16
 ori $s1,$zero,451   IF  ID  EX  MEM WB  .   .   .   .   .   .   .   .   .   .   .
 addi $t2,$s0,73     .   IF  ID  EX  MEM WB  .   .   .   .   .   .   .   .   .   .
-nop                 .   .   IF  ID  *   .   .   .   .   .   .   .   .   .   .
+nop                 .   .   IF  ID  *   *   .   .   .   .   .   .   .   .   .
 add $t4,$s1,$s7     .   .   IF  ID  EX  .   .   .   .   .   .   .   .   .   .   .
+rs: $s1
+reg: $s1
 
 $s0 = 0             $s1 = 451           $s2 = 0             $s3 = 0
 $s4 = 0             $s5 = 0             $s6 = 0             $s7 = 0
@@ -69,8 +74,10 @@ $t8 = 0             $t9 = 0
 CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16
 ori $s1,$zero,451   IF  ID  EX  MEM WB  .   .   .   .   .   .   .   .   .   .   .
 addi $t2,$s0,73     .   IF  ID  EX  MEM WB  .   .   .   .   .   .   .   .   .   .
-nop                 .   .   IF  ID  *   .   .   .   .   .   .   .   .   .
+nop                 .   .   IF  ID  *   *   *   .   .   .   .   .   .   .
 add $t4,$s1,$s7     .   .   IF  ID  EX  MEM .   .   .   .   .   .   .   .   .   .
+rs: $s1
+reg: $s1
 
 $s0 = 0             $s1 = 451           $s2 = 0             $s3 = 0
 $s4 = 0             $s5 = 0             $s6 = 0             $s7 = 0
@@ -81,8 +88,10 @@ $t8 = 0             $t9 = 0
 CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16
 ori $s1,$zero,451   IF  ID  EX  MEM WB  .   .   .   .   .   .   .   .   .   .   .
 addi $t2,$s0,73     .   IF  ID  EX  MEM WB  .   .   .   .   .   .   .   .   .   .
-nop                 .   .   IF  ID  *   .   .   .   .   .   .   .   .
+nop                 .   .   IF  ID  *   *   *   *   .   .   .   .   .
 add $t4,$s1,$s7     .   .   IF  ID  EX  MEM WB  .   .   .   .   .   .   .   .   .
+rs: $s1
+reg: $s1
 
 $s0 = 0             $s1 = 451           $s2 = 0             $s3 = 0
 $s4 = 0             $s5 = 0             $s6 = 0             $s7 = 0
