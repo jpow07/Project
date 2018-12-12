@@ -30,44 +30,61 @@ class Expression:
         self.nopString = ''
 
     def __str__(self):
-        if self.isWaiting:
-            string = self.nopString
-        else:
-            string = ''
         # Keep currentCycle in Bounds
         if self.currentCycle > 5:
             self.currentCycle = 5
 
-        # Calculate Spacing for trailing decimal point
-        if self.isWaiting:
-            spacing = 16 - self.offset - self.currentCycle - self.waitCount
-            string += "{:20}".format('nop')
-        else:
-            spacing = 16 - self.offset - self.currentCycle
-            string += "{:20}".format(self.statement)
+        spacing = 16 - self.offset - self.currentCycle
+        string = "{:20}".format(self.statement)
 
         # Print offset decimal
         if self.offset > 0:
             for i in range(self.offset):
                 string += '{:4}'.format('.')
+
         # Print previous to current cycle
         for i in range(self.currentCycle):
             string += '{0:4}'.format(self.stages[i])
-        # Print asterisk if waiting
-
-        if self.isWaiting:
-            for i in range(self.waitCount):
-                string += '{0:4}'.format('*')
 
         # Print Trailing decimal points
         for i in range(spacing - 1):
             string += '{0:4}'.format('.')
         string += '.'
-        if self.isWaiting:
-            self.nopString = string
+
+        return string
+
+    def printNop(self):
+        # Keep currentCycle in Bounds
+        if self.currentCycle > 5:
+            self.currentCycle = 5
+
+        # Calculate Spacing for trailing decimal point
+        spacing = 16 - self.offset - self.currentCycle - self.waitCount
+        string = "{:20}".format('nop')
+
+        # Print offset decimal
+        if self.offset > 0:
+            for i in range(self.offset):
+                string += '{:4}'.format('.')
+
+        # Print previous to current cycle
+        for i in range(self.currentCycle):
+            string += '{0:4}'.format(self.stages[i])
+
+        # print nop bubble
+        for i in range(self.waitCount):
+            string += '{0:4}'.format('*')
+
+        # Print Trailing decimal points
+        for i in range(spacing - 1):
+            string += '{0:4}'.format('.')
+        string += '.'
 
         # Return the string with proper spacing (20 spaces)
-        return string
+        print(string)
+
+
+
 
     def calculateExpression(self, reg):
 
@@ -103,12 +120,32 @@ class Expression:
 
 # A function to determine if a nop is needed at any given line, i
 # It takes in: i, as well as the array of lines
-def add_nop(i, MIPSExpressions):
+def add_nop(index, MIPSExpressions):
+    print(index)
+    if index == 0:
+        return
+
+    #if index > 0:
+    #    return
+
+    if (index - 1) > 0:
+        prevExpression = MIPSExpressions[index - 2]
+
+
+
+
+
+
+'''
     nop_exist = False
+
     nop_num = 0
     line = MIPSExpressions[i].operand
     up_line = MIPSExpressions[i - 1].operand
     upper_line = MIPSExpressions[i - 2].operand
+
+
+
 
     output = [nop_exist, nop_num]
     # Check if the first line
@@ -138,6 +175,7 @@ def add_nop(i, MIPSExpressions):
                     output[0] = True
                     output[1] = output[1] + 1
     return output
+'''
 
 
 # A main function to be the driver for our code
@@ -181,7 +219,7 @@ def main():
     print('START OF SIMULATION' + optionForwarding, end='\n')
     print(separateline, end='\n')
     cycles = '{:<20}'.format('CPU Cycles ===>')
-    for i in range(1,16):
+    for i in range(1, 16):
         cycles += '{:<4}'.format(i)
     cycles += '{:<0}'.format('16')
 
@@ -199,11 +237,17 @@ def main():
             if MIPSExpressions[i].currentCycle == 5:
                 MIPSExpressions[i].calculateExpression(registers)
 
+
+
             # If the Expression can execute increment cycle so next step can execute
             if MIPSExpressions[i].canExecute:
+                add_nop(i, MIPSExpressions)
                 # Print the Expression
                 print(MIPSExpressions[i], end='\n')
-                MIPSExpressions[i].currentCycle += 1
+
+                if MIPSExpressions[i].isWaiting is False:
+                    MIPSExpressions[i].currentCycle += 1
+
 
         print(end='\n')  # Print Newline
 
