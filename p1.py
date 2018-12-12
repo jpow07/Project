@@ -81,7 +81,9 @@ class Expression:
         string += '.'
         
         #Truncate if beyond bounds
-        if (self.currentCycle == 4):
+        if self.controlHazard > 0:
+            string = string[:81]        
+        elif (self.currentCycle == 4):
             string = string[:83]
         elif self.currentCycle == 1 or self.currentCycle == 2 or self.currentCycle == 3 or self.currentCycle == 5:
             string = string[:82]
