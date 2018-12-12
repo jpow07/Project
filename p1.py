@@ -6,19 +6,23 @@ The purpose of this code is to read in a mips file and to output up to the first
 """
 import sys
 
-
+#A class to hold all of the characteristics of an input and its state
 class Expression:
     stages = ["IF", "ID", "EX", "MEM", "WB"]
 
+    #Initialize the class by taking in an unseparated input statement and offset
     def __init__(self, statement, offset):
+        #Store the statement, then split at the space and store the opperand
         self.statement = statement
         temp = statement.split(' ')
         self.operand = temp[0]
+        #Split the registers and check if a load operation or not
         self.register = temp[1].split(',')
         if len(self.register) == 3:
             self.format = 'R'
         else:
             self.format = 'L'
+        #Set the default values
         self.currentCycle = 1
         self.isWaiting = False
         self.waitCount = 0
@@ -196,7 +200,7 @@ def main():
 
     # Check Command line Arguments
     if len(sys.argv) != 3:
-        print("error")
+        print("Invalid number of inputs, needs 2!\n")
         exit(1)
 
     # Check argv[1] for forwarding option
