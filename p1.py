@@ -256,7 +256,7 @@ def main():
     # TODO: I believe were supposed to stop after 48 cycles or something so we might have to change this to correct
     #  number of cycles Loop through MIPS Simulator until all instructions have complete WB stage.
     j = 0
-    while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6 and j < 21:
+    while MIPSExpressions[len(MIPSExpressions) - 1].currentCycle != 6 and j < 16:
 
         print(cycles)
         for i in range(len(MIPSExpressions)):
@@ -274,7 +274,7 @@ def main():
                 if MIPSExpressions[i].operand == "beq" or MIPSExpressions[i].operand == "bne":
                     #Check if jump
                     temp = MIPSExpressions[i].calculateExpression(registers)
-                    #Check if a valie line value recieved (gets -1 if not true)
+                    #Check if a value line value recieved (gets -1 if not true)
                     if temp >= 0:
                         #NEED TO GO TO THIS LINE NEXT (whatever value is stored in temp + 1, as temp points to the jump label)
                         #Needs to tell next 3 registers to print '*' and to immediately start printing what is stored in line after temp
@@ -286,8 +286,8 @@ def main():
                         lineCount = 0
                         line = file.readline()
                         while line:
-                            if lineCount > (temp - 1):
-                                MIPSExpressions.append(Expression(line.rstrip('\n'), (lineCount + i + 2)))
+                            if lineCount > (temp):
+                                MIPSExpressions.append(Expression(line.rstrip('\n'), (lineCount + (i-temp) + 2)))
                                 #Decrement if a jump label line to format output
                                 if ':' in line:
                                     lineCount = lineCount - 1
@@ -310,7 +310,17 @@ def main():
 
                 # if MIPSExpressions[i].isWaiting is True:
                 #    MIPSExpressions[i].waitCount += 1
-
+        if (len(MIPSExpressions) > (i + 1)):
+            if MIPSExpressions[i+1].operand == "jump":
+                MIPSExpressions[i+1].currentCycle += 1
+                MIPSExpressions[i+2].canExecute = True
+                print(MIPSExpressions[i+2], end='\n')
+                MIPSExpressions[i+2].currentCycle += 1
+            else:
+                MIPSExpressions[i+1].canExecute = True
+                print(MIPSExpressions[i+1], end='\n')
+                MIPSExpressions[i+1].currentCycle += 1
+            
         print(end='\n')  # Print Newline
 
         # Print Dictionary; set newline every 4 registers
