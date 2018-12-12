@@ -35,6 +35,9 @@ class Expression:
 
     def __str__(self):
         # Keep currentCycle in Bounds
+        if self.isWaiting is True:
+            self.printNop()
+
         if self.currentCycle > 5:
             self.currentCycle = 5
 
@@ -125,16 +128,9 @@ class Expression:
 # A function to determine if a nop is needed at any given line, i
 # It takes in: i, as well as the array of lines
 def add_nop(index, MIPSExpressions):
-    print(index)
-    if index == 0:
+    if index == 0 or MIPSExpressions[index].currentCycle < 2:
         return
-
-    #if index > 0:
-    #    return
-
-    if (index - 1) > 0:
-        prevExpression = MIPSExpressions[index - 2]
-
+    
 
 
 
