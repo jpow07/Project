@@ -74,9 +74,13 @@ class Expression:
             string += '{0:4}'.format('.')
         string += '.'
         
-        #Truncate if beyond bounds #NEEDS MORE WORK
-        string = string[:81]
-
+        #Truncate if beyond bounds
+        if (self.currentCycle == 4):
+            string = string[:83]
+        elif self.currentCycle == 1 or self.currentCycle == 2 or self.currentCycle == 3 or self.currentCycle == 5:
+            string = string[:82]
+        else:
+            string = string[:81]
         return string
 
     def printNop(self):
