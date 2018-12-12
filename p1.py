@@ -173,7 +173,8 @@ def add_nop(index, MIPSExpressions):
         two = MIPSExpressions[index - 2]
         for i in range(1, len(MIPSExpressions[index].register)):
             if two.register[0] == MIPSExpressions[index].register[i]:
-                print("rs: " + two.register[0] + '\nreg: ' + MIPSExpressions[index].register[i])
+                #Commented out test code to try submitting
+                #print("rs: " + two.register[0] + '\nreg: ' + MIPSExpressions[index].register[i])
                 MIPSExpressions[index].isWaiting = True
                 MIPSExpressions[index].waitCount += 1
 
@@ -229,7 +230,9 @@ def main():
     i = 0
     j = 0
     while i < (len(MIPSExpressions) - 1):
+        #Find beq or bne calls
         if MIPSExpressions[i].operand == 'bne' or MIPSExpressions[i].operand == 'beq':
+            #Have them point to the correct jump label in the code
             while j < (len(MIPSExpressions) - 1):
                 if MIPSExpressions[j].register[0] == MIPSExpressions[i].register[2]:
                     MIPSExpressions[i].jumpLabel = j
@@ -251,7 +254,7 @@ def main():
         for i in range(len(MIPSExpressions)):
             #Skip over any jump labels
             if MIPSExpressions[i].operand == "jump":
-                MIPSExpressions[i].currentCycle = 3
+                MIPSExpressions[i].currentCycle += 1
                 continue
             # Check the last expression to see if its completed the IF stage before the second node can execute
             if i > 0 and MIPSExpressions[i - 1].currentCycle > 2:
@@ -276,7 +279,9 @@ def main():
 
                 # Print the Expression
                 print(MIPSExpressions[i], end='\n')
-                add_nop(i, MIPSExpressions)
+                #Only print nop's when there is no forwarding
+                if sys.argv[1].upper() == 'N':
+                    add_nop(i, MIPSExpressions)
 
                 if MIPSExpressions[i].isWaiting is False:
                     MIPSExpressions[i].currentCycle += 1
